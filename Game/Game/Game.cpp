@@ -1,7 +1,9 @@
 #include "Game.h"
+#include "Parsing.h"
 
 int main()
 {
-	std::cout << "Game" << std::endl;
+	Parsing parsing;
+	parsing.Test();
 	return 0;
 }
