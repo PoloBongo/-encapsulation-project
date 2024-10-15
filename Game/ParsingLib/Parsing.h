@@ -4,6 +4,15 @@
 #include <fstream>
 #include <iostream>
 
+struct DataExtraction {
+    int id;
+    int quantity;
+    std::string type;
+    float damage;
+    float resistance;
+    float durability;
+};
+
 class Parsing {
 public:
     Parsing() {};
@@ -16,6 +25,8 @@ public:
 
     void AddNewData(const std::string& category, const std::string& key, const std::string& value);
     void Modify(const std::string& category, const std::string& key, const std::string& value);
+
+    DataExtraction GetAllDataFromInventory();
 
     void Test();
 
