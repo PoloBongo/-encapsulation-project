@@ -177,54 +177,48 @@ void Parsing::RegisterField(const std::string& key, T& field, const std::string&
 }
 
 std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory() {
-    Parsing parsing("test.ini");
+
     std::unordered_map<std::string, DataExtraction> items;
+    if (!data.empty()) {
+        for (const auto& datas : data) {
+            std::cout << "Categorie: " << datas.first << std::endl;
+            auto extractItem = GetItemsInformation(datas.first);
+            if (!extractItem.empty()) {
+                DataExtraction dataExtraction;
 
-    if (parsing.LoadFile()) {
-        if (!parsing.data.empty()) {
-            for (const auto& datas : parsing.data) {
-                std::cout << "Categorie: " << datas.first << std::endl;
-                auto extractItem = parsing.GetItemsInformation(datas.first);
-                if (!extractItem.empty()) {
-                    DataExtraction dataExtraction;
+                functionMap = {
+                    { "type", [&](const std::string& value) { RegisterField("type", dataExtraction.type, value); } },
+                    { "id", [&](const std::string& value) { RegisterField("id", dataExtraction.id, value); }},
+                    { "quantity", [&](const std::string& value) { RegisterField("quantity", dataExtraction.quantity, value); } },
+                    { "damage", [&](const std::string& value) { RegisterField("damage", dataExtraction.damage, value); } },
+                    { "durability", [&](const std::string& value) { RegisterField("durability", dataExtraction.durability, value); } },
+                    { "resistance", [&](const std::string& value) { RegisterField("resistance", dataExtraction.resistance, value); } }
+                };
 
-                    functionMap = {
-                        { "type", [&](const std::string& value) { RegisterField("type", dataExtraction.type, value); } },
-                        { "id", [&](const std::string& value) { RegisterField("id", dataExtraction.id, value); } },
-                        { "quantity", [&](const std::string& value) { RegisterField("quantity", dataExtraction.quantity, value); } },
-                        { "damage", [&](const std::string& value) { RegisterField("damage", dataExtraction.damage, value); } },
-                        { "durability", [&](const std::string& value) { RegisterField("durability", dataExtraction.durability, value); } },
-                        { "resistance", [&](const std::string& value) { RegisterField("resistance", dataExtraction.resistance, value); } }
-                    };
+                for (const auto& item : extractItem) {
+                    const std::string& key = item.first;
+                    const std::string& value = item.second;
 
-                    for (const auto& item : extractItem) {
-                        const std::string& key = item.first;
-                        const std::string& value = item.second;
-
-                        if (functionMap.find(key) != functionMap.end()) {
-                            functionMap[key](value);
-                        }
-                        else {
-                            std::cout << "Cle inconnue: " << key << std::endl;
-                        }
+                    if (functionMap.find(key) != functionMap.end()) {
+                        functionMap[key](value);
                     }
-
-                    items[datas.first] = dataExtraction;
+                    else {
+                        std::cout << "Cle inconnue: " << key << std::endl;
+                    }
                 }
+
+                items[datas.first] = dataExtraction;
             }
-        }
-        else {
-            std::cout << "data vide" << std::endl;
         }
     }
     else {
-        std::cout << "fichier ini pas trouve" << std::endl;
+        std::cout << "data vide" << std::endl;
     }
 
     return items;
 }
 
-void Parsing::ShowItem(const DataExtraction& _item) {
+void Parsing::ShowItemDetail(const DataExtraction& _item) {
     item.clear();
     std::cout << "Item details:" << std::endl;
     if (!_item.type.empty()) item.emplace_back("Type", _item.type);
@@ -241,7 +235,7 @@ void Parsing::ShowTargetItem(const std::unordered_map<std::string, DataExtractio
     auto item = items.find(itemName);
     if (item != items.end()) {
         std::cout << "Item trouve : " << itemName << std::endl;
-        ShowItem(item->second);
+        ShowItemDetail(item->second);
     }
     else {
         std::cout << "Item " << itemName << " pas trouve" << std::endl;
@@ -270,18 +264,16 @@ std::vector<std::vector<std::pair<std::string, ParsingOption>>> Parsing::GetList
 
 void Parsing::Test()
 {
-    Parsing parsing("test.ini");
+    if (LoadFile()) {
 
-    if (parsing.LoadFile()) {
-
-        std::vector<std::string> sections = parsing.GetAllCategory();
+        std::vector<std::string> sections = GetAllCategory();
         std::cout << "Toutes les catégories:" << std::endl;
         for (const auto& section : sections) {
             std::cout << "  " << section << std::endl;
         }
 
         std::string inventoryName = "inventory_1.item1";
-        auto items = parsing.GetItemsInformation(inventoryName);
+        auto items = GetItemsInformation(inventoryName);
 
         if (!items.empty()) {
             std::cout << "\nInformations sur l'item " << inventoryName << ":" << std::endl;
@@ -290,10 +282,10 @@ void Parsing::Test()
             }
         }
 
-        std::cout << "\nInformation precise sur l'item " << inventoryName << " pour la cle 'type' : " << parsing.GetValueOfItem(inventoryName, "type") << std::endl;
+        std::cout << "\nInformation precise sur l'item " << inventoryName << " pour la cle 'type' : " << GetValueOfItem(inventoryName, "type") << std::endl;
 
-        parsing.AddNewData("inventory_1.item3", "type", "ignite");
-        parsing.Modify("inventory_1.item3", "damage", "10");
+        AddNewData("inventory_1.item3", "type", "ignite");
+        Modify("inventory_1.item3", "damage", "10");
     }
     else {
         std::cout << "fichier ini pas trouvé" << std::endl;

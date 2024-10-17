@@ -1,10 +1,10 @@
+#pragma once
+#include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
-#include <iostream>
 #include <unordered_map>
 #include <functional>
-#include <any>
 #include <variant>
 
 struct DataExtraction {
@@ -36,7 +36,7 @@ public:
     std::unordered_map<std::string, DataExtraction> GetAllDataFromInventory();
     template<typename T>
     void RegisterField(const std::string& key, T& field, const std::string& value);
-    void ShowItem(const DataExtraction& item);
+    void ShowItemDetail(const DataExtraction& item);
     void ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& items, const std::string& itemName);
     void ShowTargetItems();
 
