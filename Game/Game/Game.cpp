@@ -44,9 +44,25 @@ int main()
 	std::cout << "\nSorting by SellPrice in ascending order.\n\n";
 	inventory_test->SortByPrice();
 	inventory_test->ShowInventory();
-	std::cout << "Sorting by Levels in descending order.\n\n";
+	std::cout << "\nSorting by Levels in descending order.\n\n";
 	inventory_test->SortByLevel(false);
 	inventory_test->ShowInventory();
+	std::cout << "\nSorting by Attack in ascending order.\n\n";
+	inventory_test->SortByAttack();
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by Defense in descending order.\n\n";
+	inventory_test->SortByDefense(false);
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by Type in ascending order.\n\n";
+	inventory_test->SortByType();
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by WeaponType in descending order.\n\n";
+	inventory_test->SortByWeaponType(false);
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by ArmorType in ascending order.\n\n";
+	inventory_test->SortByArmorType();
+	inventory_test->ShowInventory();
+
 
 
 	return 0;

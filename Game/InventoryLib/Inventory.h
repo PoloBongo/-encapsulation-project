@@ -31,11 +31,18 @@ public:
 
 	void AddItem(const std::shared_ptr<Item>& item, int _amount = 1);
 	void RemoveItem(const std::shared_ptr<Item>& item, int _amount = 1);
+	void LoadInventory(const std::string& _filePath);
+
+	//Sort functions
 	void SortByID(bool _ascending = true);
 	void SortByName(bool _ascending = true);
 	void SortByPrice(bool _ascending = true);
 	void SortByLevel(bool _ascending = true);
+	void SortByAttack(bool _ascending = true);
+	void SortByDefense(bool _ascending = true);
+	void SortByType(bool _ascending = true);
+	void SortByWeaponType(bool _ascending = true);
+	void SortByArmorType(bool _ascending = true);
 
 
-	void LoadInventory(const std::string& _filePath);
 };
