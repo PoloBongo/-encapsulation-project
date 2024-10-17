@@ -195,7 +195,20 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
                     { "resistance", [&](const std::string& value) { RegisterField("resistance", dataExtraction.resistance, value); } },
                     { "name", [&](const std::string& value) { RegisterField("name", dataExtraction.name, value); } },
                     { "description", [&](const std::string& value) { RegisterField("description", dataExtraction.description, value); } },
-                    { "sell_price", [&](const std::string& value) { RegisterField("sell_price", dataExtraction.sell_price, value); } }
+                    { "sell_price", [&](const std::string& value) { RegisterField("sell_price", dataExtraction.sell_price, value); } },
+                    { "level", [&](const std::string& value) { RegisterField("level", dataExtraction.level, value); } },
+                    { "defense", [&](const std::string& value) { RegisterField("defense", dataExtraction.defense, value); } },
+                    { "skill", [&](const std::string& value) { RegisterField("skill", dataExtraction.skill, value); } },
+                    { "attack", [&](const std::string& value) { RegisterField("attack", dataExtraction.attack, value); } },
+                    { "crit_rate", [&](const std::string& value) { RegisterField("crit_rate", dataExtraction.crit_rate, value); } },
+                    { "crit_damage", [&](const std::string& value) { RegisterField("crit_damage", dataExtraction.crit_damage, value); } },
+                    { "accuracy", [&](const std::string& value) { RegisterField("accuracy", dataExtraction.accuracy, value); } },
+                    { "cooldown_reduction", [&](const std::string& value) { RegisterField("cooldown_reduction", dataExtraction.cooldown_reduction, value); } },
+                    { "life_steal", [&](const std::string& value) { RegisterField("life_steal", dataExtraction.life_steal, value); } },
+                    { "attack_speed", [&](const std::string& value) { RegisterField("attack_speed", dataExtraction.attack_speed, value); } },
+                    { "item_type", [&](const std::string& value) { RegisterField("item_type", dataExtraction.item_type, value); } },
+                    { "weapon_type", [&](const std::string& value) { RegisterField("weapon_type", dataExtraction.weapon_type, value); } },
+                    { "armor_type", [&](const std::string& value) { RegisterField("armor_type", dataExtraction.armor_type, value); } }
                 };
 
                 for (const auto& item : extractItem) {
@@ -221,7 +234,7 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
     return items;
 }
 
-void Parsing::ShowItemDetail(const DataExtraction& _item) {
+void Parsing::SetItemDetail(const DataExtraction& _item) {
     item.clear();
     std::cout << "Item details:" << std::endl;
     if (!_item.type.empty()) item.emplace_back("type", _item.type);
@@ -243,6 +256,9 @@ void Parsing::ShowItemDetail(const DataExtraction& _item) {
     if (_item.accuracy != -0) item.emplace_back("accuracy", _item.accuracy);
     if (_item.cooldown_reduction != -0) item.emplace_back("cooldown_reduction", _item.cooldown_reduction);
     if (_item.life_steal != -0) item.emplace_back("life_steal", _item.life_steal);
+    if (_item.item_type != -0) item.emplace_back("item_type", _item.item_type);
+    if (_item.weapon_type != -0) item.emplace_back("weapon_type", _item.weapon_type);
+    if (_item.armor_type != -0) item.emplace_back("armor_type", _item.armor_type);
 
     listItems.push_back(item);
 }
@@ -251,7 +267,7 @@ void Parsing::ShowTargetItem(const std::unordered_map<std::string, DataExtractio
     auto item = items.find(itemName);
     if (item != items.end()) {
         std::cout << "Item trouve : " << itemName << std::endl;
-        ShowItemDetail(item->second);
+        SetItemDetail(item->second);
     }
     else {
         std::cout << "Item " << itemName << " pas trouve" << std::endl;

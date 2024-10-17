@@ -27,6 +27,9 @@ struct DataExtraction {
     int accuracy = -0;
     int cooldown_reduction = -0;
     int life_steal = -0;
+    int item_type = -0;
+    int weapon_type = -0;
+    int armor_type = -0;
 };
 
 using ParsingOption = std::variant<int, float, std::string>;
@@ -49,7 +52,7 @@ public:
     std::unordered_map<std::string, DataExtraction> GetAllDataFromInventory();
     template<typename T>
     void RegisterField(const std::string& key, T& field, const std::string& value);
-    void ShowItemDetail(const DataExtraction& item);
+    void SetItemDetail(const DataExtraction& item);
     void ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& items, const std::string& itemName);
     void ShowTargetItems();
 
