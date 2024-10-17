@@ -17,7 +17,6 @@ std::string Parsing::Trim(std::string const &str) {
 }
 
 bool Parsing::LoadFile() {
-
     if (!file.is_open()) {
         return false;
     }
@@ -40,7 +39,6 @@ bool Parsing::LoadFile() {
                 std::string key = Trim(line.substr(0, pos));
                 std::string value = Trim(line.substr(pos + 1));
                 data[currentSection][key] = value;
-                std::cout << key << " : " << value << std::endl;
             }
         }
     }
@@ -57,7 +55,7 @@ std::vector<std::string> Parsing::GetAllCategory() const {
     return categories;
 }
 
-std::map<std::string, std::string> Parsing::GetItemsInformation(const std::string& sectionName) const {
+std::unordered_map<std::string, std::string> Parsing::GetItemsInformation(const std::string& sectionName) const {
     auto getItemsInfo = data.find(sectionName);
     if (getItemsInfo != data.end()) {
         return getItemsInfo->second;
@@ -156,34 +154,118 @@ void Parsing::Modify(const std::string& _category, const std::string& _key, cons
     }
 }
 
-DataExtraction Parsing::GetAllDataFromInventory()
-{
-    std::string currentSection;
-    std::string line;
-    DataExtraction* dataExtraction = new DataExtraction();
-    while (std::getline(file, line)) {
-        line = Trim(line);
-
-        if (line.empty() || line[0] == ';' || line[0] == '#') {
-            continue;
+template<typename T>
+void Parsing::RegisterField(const std::string& key, T& field, const std::string& value) {
+    try {
+        if constexpr (std::is_same_v<T, int>) {
+            field = std::stoi(value);
         }
-
-        if (line[0] == '[' && line.back() == ']') {
-            currentSection = line.substr(1, line.size() - 2);
+        else if constexpr (std::is_same_v<T, float>) {
+            field = std::stof(value);
         }
-        else if (!currentSection.empty()) {
-            size_t pos = line.find('=');
-            if (pos != std::string::npos) {
-                std::string key = Trim(line.substr(0, pos));
-                std::string value = Trim(line.substr(pos + 1));
-                data[currentSection][key] = value;
+        else if constexpr (std::is_same_v<T, std::string>) {
+            field = value;
+        }
+        else {
+            throw std::invalid_argument("Type non supporte");
+        }
+        std::cout << key << " = " << field << std::endl;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Erreur lors de la conversion du champ '" << key << "' : " << e.what() << std::endl;
+    }
+}
+
+std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory() {
+    Parsing parsing("test.ini");
+    std::unordered_map<std::string, DataExtraction> items;
+
+    if (parsing.LoadFile()) {
+        if (!parsing.data.empty()) {
+            for (const auto& datas : parsing.data) {
+                std::cout << "Categorie: " << datas.first << std::endl;
+                auto extractItem = parsing.GetItemsInformation(datas.first);
+                if (!extractItem.empty()) {
+                    DataExtraction dataExtraction;
+
+                    functionMap = {
+                        { "type", [&](const std::string& value) { RegisterField("type", dataExtraction.type, value); } },
+                        { "id", [&](const std::string& value) { RegisterField("id", dataExtraction.id, value); } },
+                        { "quantity", [&](const std::string& value) { RegisterField("quantity", dataExtraction.quantity, value); } },
+                        { "damage", [&](const std::string& value) { RegisterField("damage", dataExtraction.damage, value); } },
+                        { "durability", [&](const std::string& value) { RegisterField("durability", dataExtraction.durability, value); } },
+                        { "resistance", [&](const std::string& value) { RegisterField("resistance", dataExtraction.resistance, value); } }
+                    };
+
+                    for (const auto& item : extractItem) {
+                        const std::string& key = item.first;
+                        const std::string& value = item.second;
+
+                        if (functionMap.find(key) != functionMap.end()) {
+                            functionMap[key](value);
+                        }
+                        else {
+                            std::cout << "Cle inconnue: " << key << std::endl;
+                        }
+                    }
+
+                    items[datas.first] = dataExtraction;
+                }
             }
         }
+        else {
+            std::cout << "data vide" << std::endl;
+        }
+    }
+    else {
+        std::cout << "fichier ini pas trouve" << std::endl;
     }
 
-    file.close();
+    return items;
+}
 
-    return DataExtraction();
+void Parsing::ShowItem(const DataExtraction& _item) {
+    item.clear();
+    std::cout << "Item details:" << std::endl;
+    if (!_item.type.empty()) item.emplace_back("Type", _item.type);
+    if (_item.id != -1) item.emplace_back("ID", _item.id);
+    if (_item.quantity != -1) item.emplace_back("Quantity", _item.quantity);
+    if (_item.damage != -0.f) item.emplace_back("Damage", _item.damage);
+    if (_item.durability != -0.f) item.emplace_back("Durability", _item.durability);
+    if (_item.resistance != -0.0f) item.emplace_back("Resitance", _item.resistance);
+
+    listItems.push_back(item);
+}
+
+void Parsing::ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& items, const std::string& itemName) {
+    auto item = items.find(itemName);
+    if (item != items.end()) {
+        std::cout << "Item trouve : " << itemName << std::endl;
+        ShowItem(item->second);
+    }
+    else {
+        std::cout << "Item " << itemName << " pas trouve" << std::endl;
+    }
+}
+
+void Parsing::ShowTargetItems()
+{
+    if (LoadFile()) {
+
+        std::unordered_map<std::string, DataExtraction> items = GetAllDataFromInventory();
+        std::vector<std::string> sections = GetAllCategory();
+        std::cout << "Toutes les catégories:" << std::endl;
+        for (const auto& section : sections) {
+            ShowTargetItem(items, section);
+        }
+    }
+    else {
+        std::cout << "fichier ini pas trouvé" << std::endl;
+    }
+}
+
+std::vector<std::vector<std::pair<std::string, ParsingOption>>> Parsing::GetListItems() {
+    return listItems;
 }
 
 void Parsing::Test()

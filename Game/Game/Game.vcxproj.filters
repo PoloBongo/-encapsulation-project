@@ -26,5 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="test.ini" />
+    <None Include="database.ini" />
   </ItemGroup>
 </Project>
