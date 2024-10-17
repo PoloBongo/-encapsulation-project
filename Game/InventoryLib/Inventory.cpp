@@ -189,7 +189,7 @@ void AppendIfNotZero(std::ostream& os, const std::string& label, T value) {
 }
 
 void AppendIfNotZero(std::ostream& os, const std::string& label, const std::string& value) {
-	if (!value.empty()) {
+	if (!value.compare("")) {
 		os << " " << label << ": " << value;
 	}
 }
