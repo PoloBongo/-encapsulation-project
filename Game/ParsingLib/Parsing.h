@@ -9,11 +9,24 @@
 
 struct DataExtraction {
     std::string type = "";
-    int id = -1;
-    int quantity = -1;
-    float damage = -0.f;
-    float durability = -0.f;
-    float resistance = -0.f;
+    std::string name = "";
+    std::string description = "";
+    std::string skill = "";
+    int id = -0;
+    int quantity = -0;
+    int damage = -0;
+    int durability = -0;
+    int resistance = -0;
+    int sell_price = -0;
+    int level = -0;
+    int defense = -0;
+    int attack = -0;
+    int attack_speed = -0;
+    int crit_rate = -0;
+    int crit_damage = -0;
+    int accuracy = -0;
+    int cooldown_reduction = -0;
+    int life_steal = -0;
 };
 
 using ParsingOption = std::variant<int, float, std::string>;

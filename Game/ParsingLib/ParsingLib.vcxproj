@@ -149,10 +149,12 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="Parsing.h" />
+    <ClInclude Include="ParsingDatabase.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Parsing.cpp" />
+    <ClCompile Include="ParsingDatabase.cpp" />
     <ClCompile Include="ParsingLib.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

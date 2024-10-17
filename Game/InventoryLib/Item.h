@@ -3,10 +3,10 @@
 
 enum ItemType
 {
-	item_Weapon,
-	item_Armor,
-	item_Consumable,
-	item_Miscellaneous
+	item_Weapon = 0,
+	item_Armor = 1,
+	item_Consumable = 2,
+	item_Miscellaneous = 3
 };
 
 class Item
@@ -19,8 +19,8 @@ private:
 	int sell_price = 0;
 
 public:
-	Item(ItemType _type, int _id, std::string _name, std::string _desc, int _sell_price);
-	~Item() = default;
+	Item(int _type, int _id, std::string _name, std::string _desc, int _sell_price);
+	virtual ~Item() = default;
 	int GetID() const { return id; }
 	std::string GetName() const { return name; }
 	std::string GetDescription() const { return description; }

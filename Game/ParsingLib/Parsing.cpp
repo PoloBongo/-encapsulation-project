@@ -192,7 +192,10 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
                     { "quantity", [&](const std::string& value) { RegisterField("quantity", dataExtraction.quantity, value); } },
                     { "damage", [&](const std::string& value) { RegisterField("damage", dataExtraction.damage, value); } },
                     { "durability", [&](const std::string& value) { RegisterField("durability", dataExtraction.durability, value); } },
-                    { "resistance", [&](const std::string& value) { RegisterField("resistance", dataExtraction.resistance, value); } }
+                    { "resistance", [&](const std::string& value) { RegisterField("resistance", dataExtraction.resistance, value); } },
+                    { "name", [&](const std::string& value) { RegisterField("name", dataExtraction.name, value); } },
+                    { "description", [&](const std::string& value) { RegisterField("description", dataExtraction.description, value); } },
+                    { "sell_price", [&](const std::string& value) { RegisterField("sell_price", dataExtraction.sell_price, value); } }
                 };
 
                 for (const auto& item : extractItem) {
@@ -221,12 +224,25 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
 void Parsing::ShowItemDetail(const DataExtraction& _item) {
     item.clear();
     std::cout << "Item details:" << std::endl;
-    if (!_item.type.empty()) item.emplace_back("Type", _item.type);
-    if (_item.id != -1) item.emplace_back("ID", _item.id);
-    if (_item.quantity != -1) item.emplace_back("Quantity", _item.quantity);
-    if (_item.damage != -0.f) item.emplace_back("Damage", _item.damage);
-    if (_item.durability != -0.f) item.emplace_back("Durability", _item.durability);
-    if (_item.resistance != -0.0f) item.emplace_back("Resitance", _item.resistance);
+    if (!_item.type.empty()) item.emplace_back("type", _item.type);
+    if (_item.id != -0) item.emplace_back("id", _item.id);
+    if (_item.quantity != -0) item.emplace_back("quantity", _item.quantity);
+    if (_item.damage != -0) item.emplace_back("damage", _item.damage);
+    if (_item.durability != -0) item.emplace_back("durability", _item.durability);
+    if (_item.resistance != -0) item.emplace_back("resistance", _item.resistance);
+    if (!_item.name.empty()) item.emplace_back("name", _item.name);
+    if (!_item.description.empty()) item.emplace_back("description", _item.description);
+    if (_item.sell_price != -0) item.emplace_back("sell_price", _item.sell_price);
+    if (_item.level != -0) item.emplace_back("level", _item.level);
+    if (_item.defense != -0) item.emplace_back("defense", _item.defense);
+    if (!_item.skill.empty()) item.emplace_back("skill", _item.skill);
+    if (_item.attack != -0) item.emplace_back("attack", _item.attack);
+    if (_item.attack_speed != -0) item.emplace_back("attack_speed", _item.attack_speed);
+    if (_item.crit_rate != -0) item.emplace_back("crit_rate", _item.crit_rate);
+    if (_item.crit_damage != -0) item.emplace_back("crit_damage", _item.crit_damage);
+    if (_item.accuracy != -0) item.emplace_back("accuracy", _item.accuracy);
+    if (_item.cooldown_reduction != -0) item.emplace_back("cooldown_reduction", _item.cooldown_reduction);
+    if (_item.life_steal != -0) item.emplace_back("life_steal", _item.life_steal);
 
     listItems.push_back(item);
 }
