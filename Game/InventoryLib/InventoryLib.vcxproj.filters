@@ -36,6 +36,9 @@
     <ClInclude Include="Armor.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="ItemBuild.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InventoryLib.cpp">
@@ -57,6 +60,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Armor.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemBuild.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

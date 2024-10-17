@@ -71,3 +71,37 @@ void Inventory::SortByName(bool _ascending)
 {
 	std::sort(items.begin(), items.end(), CompareByName(_ascending));
 }
+
+void Inventory::LoadInventory(const std::string& _filePath)
+{
+	Parsing parsing(_filePath);
+
+	parsing.ShowTargetItems();
+	auto sections = parsing.GetListItems();
+
+	CreateItem(sections);
+}
+
+void Inventory::CreateItem(std::vector<std::vector<std::pair<std::string, ParsingOption>>>& _listItems) {
+	ItemBuild itemBuild;
+    for (const auto& listItem : _listItems) {
+        std::string type;
+
+		// stock le type pour le transmettre à "ItemBuild" qui pourra déterminer c'est quel type d'item
+		// puis traiter en fonction du type d'item les valeurs à attribué
+        for (const auto& [key, value] : listItem) {
+            std::visit([&](auto&& arg) {
+                if (key == "type") {
+                    if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::string>) {
+                        type = arg;
+                    }
+                }
+            }, value);
+        }
+
+		auto item = itemBuild.CreateItemByType(type, listItem);
+		if (item) {
+			AddItem(item);
+		}
+    }
+}
