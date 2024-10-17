@@ -3,11 +3,11 @@
 
 enum ArmorType
 {
-	Helmet,
-	Chestplate,
-	Gloves,
-	Leggings,
-	Boots
+	Helmet = 0,
+	Chestplate = 1,
+	Gloves = 2,
+	Leggings = 3,
+	Boots = 4
 };
 
 class Armor : public Equipment
@@ -21,7 +21,7 @@ private:
 	int luck = 0;
 
 public:
-	Armor(ArmorType _armor_type, int _ID, std::string _name, std::string _desc, int _sell_price = 0, int _level = 1,
+	Armor(int _armor_type, int _ID, std::string _name, std::string _desc, int _sell_price = 0, int _level = 1,
 		int _defense = 0, std::string _skill = "", int _health = 0, int _dodge_rate = 0, int _resistance = 0, int _health_regen = 0,
 		int _luck = 0);
 	std::string GetArmorType() const;

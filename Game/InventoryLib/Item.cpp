@@ -1,8 +1,8 @@
 #include "Item.h"
 
-Item::Item(ItemType _type, int _id, std::string _name,std::string _desc , int _sell_price)
+Item::Item(int _type, int _id, std::string _name,std::string _desc , int _sell_price)
 {
-	type = _type;
+	type = static_cast<ItemType>(_type);
 	id = _id;
 	name = _name;
 	description = _desc;

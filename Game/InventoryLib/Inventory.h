@@ -1,8 +1,7 @@
 #pragma once
 #include <vector>
 #include <algorithm>
-#include "Weapon.h"
-#include "Armor.h"
+#include "ItemBuild.h"
 
 #define RESET   "\033[0m"
 #define BLACK   "\033[30m"      
@@ -22,6 +21,9 @@ private:
 	void PrintArmor(const std::shared_ptr<Armor>& _armor, const int _quantity, const int _num);
 	void PrintItem(const std::shared_ptr<Item>& _item, const int _quantity, const int _num, const std::string _color);
 	void PrintEquipment(const std::shared_ptr<Equipment>& _equip);
+	std::unordered_map<std::string, std::function<void(const std::string&)>> functionMap;
+	void CreateItem(std::vector<std::vector<std::pair<std::string, ParsingOption>>>& _listItems);
+
 public:
 	Inventory();
 	~Inventory() = default;
@@ -34,4 +36,6 @@ public:
 	void SortByPrice(bool _ascending = true);
 	void SortByLevel(bool _ascending = true);
 
+
+	void LoadInventory(const std::string& _filePath);
 };
