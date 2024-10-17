@@ -12,3 +12,22 @@ Armor::Armor(ArmorType _armor_type, int _ID, std::string _name, std::string _des
 	health_regen = _health_regen;
 	luck = _luck;
 }
+
+std::string Armor::GetArmorType() const
+{
+	switch (armor_type)
+	{
+		case ArmorType::Helmet:
+			return "Helmet";
+		case ArmorType::Chestplate:
+			return "Chestplate";
+		case ArmorType::Gloves:
+			return "Gloves";
+		case ArmorType::Leggings:
+			return "Leggings";
+		case ArmorType::Boots:
+			return "Boots";
+		default:
+			return "Unknown";
+	}
+}

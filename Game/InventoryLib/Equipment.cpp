@@ -7,3 +7,4 @@ Equipment::Equipment(ItemType _type, int _ID, std::string _name, std::string _de
 	defense = _defense;
 	skill = _skill;
 }
+

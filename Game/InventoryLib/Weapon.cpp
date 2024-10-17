@@ -14,3 +14,22 @@ Weapon::Weapon(WeaponType _weapon_type, int _ID, std::string _name, std::string 
 	cooldown_reduction = _cooldown_reduction;
 	life_steal = _life_steal;
 }
+
+std::string Weapon::GetWeaponType() const
+{
+	switch (weapon_type)
+	{
+		case WeaponType::Sword:
+			return "Sword";
+		case WeaponType::Axe:
+			return "Axe";
+		case WeaponType::Katana:
+			return "Katana";
+		case WeaponType::Mace:
+			return "Mace";
+		case WeaponType::Dagger:
+			return "Dagger";
+		default:
+			return "Unknown";
+	}
+}

@@ -16,13 +16,20 @@ int main()
 	inventory_test->AddItem(WoodenAxe);
 
 	inventory_test->ShowInventory();
-	std::cout << "Sorting by name.\n\n";
+	std::cout << "\nSorting by name.\n\n";
 	inventory_test->SortByName();
 	inventory_test->ShowInventory();
-	std::cout << "Sorting by ID in descending order.\n\n";
+	std::cout << "\nSorting by ID in descending order.\n\n";
 	inventory_test->SortByID(false);
 	inventory_test->ShowInventory();
-	std::cout << "Sorting by ID in ascending order.\n\n";
+	std::cout << "\nSorting by ID in ascending order.\n\n";
 	inventory_test->SortByID();
 	inventory_test->ShowInventory();
+	std::cout << "\nSorting by SellPrice in ascending order.\n\n";
+	inventory_test->SortByPrice();
+	inventory_test->ShowInventory();
+	std::cout << "Sorting by Levels in descending order.\n\n";
+	inventory_test->SortByLevel(false);
+	inventory_test->ShowInventory();
+
 }

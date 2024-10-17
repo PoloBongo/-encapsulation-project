@@ -20,7 +20,7 @@ private:
 
 public:
 	Item(ItemType _type, int _id, std::string _name, std::string _desc, int _sell_price);
-	~Item() = default;
+	virtual ~Item() = default;
 	int GetID() const { return id; }
 	std::string GetName() const { return name; }
 	std::string GetDescription() const { return description; }

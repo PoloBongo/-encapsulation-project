@@ -26,7 +26,7 @@ public:
 		int _defense = 0, std::string _skill = "", int _attack = 0, int _attack_speed = 0, int _crit_rate = 0, int _crit_damage = 0,
 		int _accuracy = 0, int _cooldown_reduction = 0, int _life_steal = 0);
 	~Weapon() = default;
-	WeaponType GetWeaponType() const { return weapon_type; }
+	std::string GetWeaponType() const;
 	int GetAttack() const { return attack; }
 	int GetAttackSpeed() const { return attack_speed; }
 	int GetCritRate() const { return crit_rate; }
