@@ -17,12 +17,15 @@ class Inventory
 {
 private:
 	std::vector<std::pair<std::shared_ptr<Item>, int>> items;
+	std::vector<std::pair<std::shared_ptr<Item>, int>> items_filtered;
+
+	std::unordered_map<std::string, std::function<void(const std::string&)>> functionMap;
+	void CreateItem(std::vector<std::vector<std::pair<std::string, ParsingOption>>>& _listItems);
+
 	void PrintWeapon(const std::shared_ptr<Weapon>& _weapon, const int _quantity, const int _num);
 	void PrintArmor(const std::shared_ptr<Armor>& _armor, const int _quantity, const int _num);
 	void PrintItem(const std::shared_ptr<Item>& _item, const int _quantity, const int _num, const std::string _color);
 	void PrintEquipment(const std::shared_ptr<Equipment>& _equip);
-	std::unordered_map<std::string, std::function<void(const std::string&)>> functionMap;
-	void CreateItem(std::vector<std::vector<std::pair<std::string, ParsingOption>>>& _listItems);
 
 public:
 	Inventory();
@@ -36,13 +39,23 @@ public:
 	//Sort functions
 	void SortByID(bool _ascending = true);
 	void SortByName(bool _ascending = true);
-	void SortByPrice(bool _ascending = true);
-	void SortByLevel(bool _ascending = true);
-	void SortByAttack(bool _ascending = true);
-	void SortByDefense(bool _ascending = true);
 	void SortByType(bool _ascending = true);
 	void SortByWeaponType(bool _ascending = true);
 	void SortByArmorType(bool _ascending = true);
-
+	void SortByPrice(bool _ascending = true);
+	void SortByLevel(bool _ascending = true);
+	void SortByDefense(bool _ascending = true);
+	void SortByAttack(bool _ascending = true);
+	void SortByAttackSpeed(bool _ascending = true);
+	void SortByCritRate(bool _ascending = true);
+	void SortByCritDamage(bool _ascending = true);
+	void SortByAccuracy(bool _ascending = true);
+	void SortByCooldownReduction(bool _ascending = true);
+	void SortByLifeSteal(bool _ascending = true);
+	void SortByHealth(bool _ascending = true);
+	void SortByDodgeRate(bool _ascending = true);
+	void SortByResistance(bool _ascending = true);
+	void SortByHealthRegen(bool _ascending = true);
+	void SortByLuck(bool _ascending = true);
 
 };

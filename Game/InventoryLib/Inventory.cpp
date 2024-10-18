@@ -69,28 +69,6 @@ void Inventory::CreateItem(std::vector<std::vector<std::pair<std::string, Parsin
     }
 }
 
-
-void Inventory::ShowInventory()
-{
-	std::cout << "Inventory: " << std::endl;
-	for (int i = 0; i < items.size(); i++)
-	{
-		switch (items[i].first->GetItemType())
-		{
-		case ItemType::item_Weapon:
-			PrintWeapon(std::dynamic_pointer_cast<Weapon>(items[i].first), items[i].second, i);
-			break;
-		case ItemType::item_Armor:
-			PrintArmor(std::dynamic_pointer_cast<Armor>(items[i].first), items[i].second, i);
-			break;
-		default:
-			PrintItem(items[i].first, items[i].second, i, WHITE);
-			break;
-		}
-		std::cout << std::endl;
-	}
-}
-
 // Sorting functions
 template <typename T, typename CompareFunc>
 struct CompareBy {
@@ -105,13 +83,12 @@ struct CompareBy {
 		if (itemA && itemB) {
 			return ascending ? compareFunc(itemA, itemB) : compareFunc(itemB, itemA);
 		}
-		if (itemA) return true; // If A is of type T and B is not, A is considered greater
-		if (itemB) return false; // If B is of type T and A is not, B is considered greater
+		if (itemA) return true;
+		if (itemB) return false;
 
 		return false; // If either is not of type T, they are considered equal for sorting purposes
 	}
 };
-
 
 void Inventory::SortByID(bool _ascending) {
 	auto compareFunc = [](const std::shared_ptr<Item>& a, const std::shared_ptr<Item>& b) {
@@ -125,34 +102,6 @@ void Inventory::SortByName(bool _ascending) {
 		return a->GetName() < b->GetName();
 		};
 	std::sort(items.begin(), items.end(), CompareBy<Item, decltype(compareFunc)>(_ascending, compareFunc));
-}
-
-void Inventory::SortByPrice(bool _ascending) {
-	auto compareFunc = [](const std::shared_ptr<Item>& a, const std::shared_ptr<Item>& b) {
-		return a->GetSellPrice() < b->GetSellPrice();
-		};
-	std::sort(items.begin(), items.end(), CompareBy<Item, decltype(compareFunc)>(_ascending, compareFunc));
-}
-
-void Inventory::SortByLevel(bool _ascending) {
-	auto compareFunc = [](const std::shared_ptr<Equipment>& a, const std::shared_ptr<Equipment>& b) {
-		return a->GetLevel() < b->GetLevel();
-		};
-	std::sort(items.begin(), items.end(), CompareBy<Equipment, decltype(compareFunc)>(_ascending, compareFunc));
-}
-
-void Inventory::SortByAttack(bool _ascending) {
-	auto compareFunc = [](const std::shared_ptr<Weapon>& a, const std::shared_ptr<Weapon>& b) {
-		return a->GetAttack() < b->GetAttack();
-		};
-	std::sort(items.begin(), items.end(), CompareBy<Weapon, decltype(compareFunc)>(_ascending, compareFunc));
-}
-
-void Inventory::SortByDefense(bool _ascending) {
-	auto compareFunc = [](const std::shared_ptr<Equipment>& a, const std::shared_ptr<Equipment>& b) {
-		return a->GetDefense() < b->GetDefense();
-		};
-	std::sort(items.begin(), items.end(), CompareBy<Equipment, decltype(compareFunc)>(_ascending, compareFunc));
 }
 
 void Inventory::SortByType(bool _ascending) {
@@ -172,6 +121,123 @@ void Inventory::SortByWeaponType(bool _ascending) {
 void Inventory::SortByArmorType(bool _ascending) {
 	auto compareFunc = [](const std::shared_ptr<Armor>& a, const std::shared_ptr<Armor>& b) {
 		return a->GetArmorType() < b->GetArmorType();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Armor, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByPrice(bool _ascending) {
+	auto compareFunc = [](const std::shared_ptr<Item>& a, const std::shared_ptr<Item>& b) {
+		return a->GetSellPrice() < b->GetSellPrice();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Item, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByLevel(bool _ascending) {
+	auto compareFunc = [](const std::shared_ptr<Equipment>& a, const std::shared_ptr<Equipment>& b) {
+		return a->GetLevel() < b->GetLevel();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Equipment, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByDefense(bool _ascending) {
+	auto compareFunc = [](const std::shared_ptr<Equipment>& a, const std::shared_ptr<Equipment>& b) {
+		return a->GetDefense() < b->GetDefense();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Equipment, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByAttack(bool _ascending) {
+	auto compareFunc = [](const std::shared_ptr<Weapon>& a, const std::shared_ptr<Weapon>& b) {
+		return a->GetAttack() < b->GetAttack();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Weapon, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByAttackSpeed(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Weapon>& a, const std::shared_ptr<Weapon>& b) {
+		return a->GetAttackSpeed() < b->GetAttackSpeed();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Weapon, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByCritRate(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Weapon>& a, const std::shared_ptr<Weapon>& b) {
+		return a->GetCritRate() < b->GetCritRate();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Weapon, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByCritDamage(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Weapon>& a, const std::shared_ptr<Weapon>& b) {
+		return a->GetCritDamage() < b->GetCritDamage();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Weapon, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByAccuracy(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Weapon>& a, const std::shared_ptr<Weapon>& b) {
+		return a->GetAccuracy() < b->GetAccuracy();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Weapon, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByCooldownReduction(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Weapon>& a, const std::shared_ptr<Weapon>& b) {
+		return a->GetCooldownReduction() < b->GetCooldownReduction();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Weapon, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByLifeSteal(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Weapon>& a, const std::shared_ptr<Weapon>& b) {
+		return a->GetLifeSteal() < b->GetLifeSteal();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Weapon, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByHealth(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Armor>& a, const std::shared_ptr<Armor>& b) {
+		return a->GetHealth() < b->GetHealth();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Armor, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+
+void Inventory::SortByDodgeRate(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Armor>& a, const std::shared_ptr<Armor>& b) {
+		return a->GetDodgeRate() < b->GetDodgeRate();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Armor, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByHealthRegen(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Armor>& a, const std::shared_ptr<Armor>& b) {
+		return a->GetHealthRegen() < b->GetHealthRegen();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Armor, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByResistance(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Armor>& a, const std::shared_ptr<Armor>& b) {
+		return a->GetResistance() < b->GetResistance();
+		};
+	std::sort(items.begin(), items.end(), CompareBy<Armor, decltype(compareFunc)>(_ascending, compareFunc));
+}
+
+void Inventory::SortByLuck(bool _ascending)
+{
+	auto compareFunc = [](const std::shared_ptr<Armor>& a, const std::shared_ptr<Armor>& b) {
+		return a->GetLuck() < b->GetLuck();
 		};
 	std::sort(items.begin(), items.end(), CompareBy<Armor, decltype(compareFunc)>(_ascending, compareFunc));
 }
@@ -239,4 +305,26 @@ void Inventory::PrintEquipment(const std::shared_ptr<Equipment>& _equipment)
 	AppendIfNotZero(std::cout, "Level", _equipment->GetLevel());
 	AppendIfNotZero(std::cout, "Defense", _equipment->GetDefense());
 	
+}
+
+
+void Inventory::ShowInventory()
+{
+	std::cout << "Inventory: " << std::endl;
+	for (int i = 0; i < items.size(); i++)
+	{
+		switch (items[i].first->GetItemType())
+		{
+		case ItemType::item_Weapon:
+			PrintWeapon(std::dynamic_pointer_cast<Weapon>(items[i].first), items[i].second, i);
+			break;
+		case ItemType::item_Armor:
+			PrintArmor(std::dynamic_pointer_cast<Armor>(items[i].first), items[i].second, i);
+			break;
+		default:
+			PrintItem(items[i].first, items[i].second, i, WHITE);
+			break;
+		}
+		std::cout << std::endl;
+	}
 }

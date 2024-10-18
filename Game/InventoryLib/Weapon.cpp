@@ -7,7 +7,7 @@ Weapon::Weapon(int _weapon_type, int _ID, std::string _name, std::string _desc, 
 {
 	weapon_type = static_cast<WeaponType>(_weapon_type);
 	attack = _attack;
-	attack_speed = attack_speed;
+	attack_speed = _attack_speed;
 	crit_rate = _crit_rate;
 	crit_damage = _crit_damage;
 	accuracy = _accuracy;

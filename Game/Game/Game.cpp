@@ -62,8 +62,29 @@ int main()
 	std::cout << "\nSorting by ArmorType in ascending order.\n\n";
 	inventory_test->SortByArmorType();
 	inventory_test->ShowInventory();
-
-
-
+	std::cout << "\nSorting by Attack Speed in ascending order.\n\n";
+	inventory_test->SortByAttackSpeed();
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by Critical Rate in descending order.\n\n";
+	inventory_test->SortByCritRate(false);
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by Critical Damage in ascending order.\n\n";
+	inventory_test->SortByCritDamage();
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by Accuracy in descending order.\n\n";
+	inventory_test->SortByAccuracy(false);
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by Cooldown Reduction in ascending order.\n\n";
+	inventory_test->SortByCooldownReduction();
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by Life Steal in descending order.\n\n";
+	inventory_test->SortByLifeSteal(false);
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by Health Regen in ascending order.\n\n";
+	inventory_test->SortByHealthRegen();
+	inventory_test->ShowInventory();
+	std::cout << "\nSorting by Luck in ascending order.\n\n";
+	inventory_test->SortByLuck();
+	inventory_test->ShowInventory();
 	return 0;
 }
