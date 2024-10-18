@@ -75,6 +75,7 @@ void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unorder
                     { "id", [&](const std::string& value) { _parsing.RegisterField("id", _dataExtraction.id, value); } },
                     { "name", [&](const std::string& value) { _parsing.RegisterField("name", _dataExtraction.name, value); } },
                     { "description", [&](const std::string& value) { _parsing.RegisterField("description", _dataExtraction.description, value); }},
+                    { "isStackable", [&](const std::string& value) { _parsing.RegisterField("isStackable", _dataExtraction.isStackable, value); }},
                 };
 
                 canExtract = false;

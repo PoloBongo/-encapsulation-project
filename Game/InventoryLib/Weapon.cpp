@@ -1,9 +1,9 @@
 #include "Weapon.h"
 
-Weapon::Weapon(int _weapon_type, int _ID, std::string _name, std::string _desc, int _sell_price, int _level,
+Weapon::Weapon(int _weapon_type, int _ID, std::string _name, std::string _desc, int _sell_price, bool _isStackable, int _level,
 	int _defense, std::string _skill, int _attack, int _attack_speed, int _crit_rate, int _crit_damage,
 	int _accuracy, int _cooldown_reduction , int _life_steal)
-	: Equipment(ItemType::item_Weapon, _ID, _name, _desc, _sell_price, _level, _defense, _skill)
+	: Equipment(ItemType::item_Weapon, _ID, _name, _desc, _sell_price, _isStackable, _level, _defense, _skill)
 {
 	weapon_type = static_cast<WeaponType>(_weapon_type);
 	attack = _attack;

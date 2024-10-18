@@ -155,27 +155,6 @@ void Parsing::Modify(const std::string& _category, const std::string& _key, cons
     }
 }
 
-template<typename T>
-void Parsing::RegisterField(const std::string& key, T& field, const std::string& value) {
-    try {
-        if constexpr (std::is_same_v<T, int>) {
-            field = std::stoi(value);
-        }
-        else if constexpr (std::is_same_v<T, float>) {
-            field = std::stof(value);
-        }
-        else if constexpr (std::is_same_v<T, std::string>) {
-            field = value;
-        }
-        else {
-            throw std::invalid_argument("Type non supporte");
-        }
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Erreur lors de la conversion du champ '" << key << "' : " << e.what() << std::endl;
-    }
-}
-
 std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory() {
     ParsingDatabase parsingDatabase("database.ini");
     std::unordered_map<std::string, DataExtraction> items;
@@ -216,11 +195,7 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
                         if (key == "type") {
                             newType = value;
                         }
-                        if (key == "id" && !newType.empty())
-                        {
-                            newID = std::stoi(value);
-                            parsingDatabase.JointureFile(dataExtraction, functionMap, *this, std::stoi(value));
-                        };
+                        if (key == "id" && !newType.empty()) parsingDatabase.JointureFile(dataExtraction, functionMap, *this, std::stoi(value));
                         functionMap[key](value);
                     }
                     else {
@@ -263,6 +238,7 @@ void Parsing::SetItemDetail(const DataExtraction& _item) {
     if (_item.item_type != -0) item.emplace_back("item_type", _item.item_type);
     if (_item.weapon_type != -0) item.emplace_back("weapon_type", _item.weapon_type);
     if (_item.armor_type != -0) item.emplace_back("armor_type", _item.armor_type);
+    item.emplace_back("isStackable", _item.isStackable);
 
     listItems.push_back(item);
 }

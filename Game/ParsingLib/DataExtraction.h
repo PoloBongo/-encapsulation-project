@@ -6,6 +6,7 @@ struct DataExtraction {
     std::string name = "";
     std::string description = "";
     std::string skill = "";
+    bool isStackable;
     int id = -0;
     int quantity = -0;
     int damage = -0;

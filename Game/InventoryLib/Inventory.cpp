@@ -8,12 +8,15 @@ Inventory::Inventory()
 
 void Inventory::AddItem(const std::shared_ptr<Item>& _item, int _amount)
 {
-	for (int i = 0; i < items.size(); i++)
+	if (_item->GetStackable())
 	{
-		if (items[i].first->GetID() == _item->GetID())
+		for (int i = 0; i < items.size(); i++)
 		{
-			items[i].second += _amount;
-			return;
+			if (items[i].first->GetID() == _item->GetID())
+			{
+				items[i].second += _amount;
+				return;
+			}
 		}
 	}
 	items.push_back(std::make_pair(_item, _amount));

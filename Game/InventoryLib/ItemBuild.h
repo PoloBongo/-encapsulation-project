@@ -16,7 +16,8 @@ private:
                     GetValueOrDefault<int>("id", properties),
                     GetValueOrDefault<std::string>("name", properties),
                     GetValueOrDefault<std::string>("description", properties),
-                    GetValueOrDefault<int>("sell_price", properties)
+                    GetValueOrDefault<int>("sell_price", properties),
+                    GetValueOrDefault<bool>("isStackable", properties)
                 );
             }},
             {"Weapon", [&](const auto& properties) {
@@ -26,6 +27,7 @@ private:
                     GetValueOrDefault<std::string>("name", properties),
                     GetValueOrDefault<std::string>("description", properties),
                     GetValueOrDefault<int>("sell_price", properties),
+                    GetValueOrDefault<bool>("isStackable", properties),
                     GetValueOrDefault<int>("level", properties),
                     GetValueOrDefault<int>("defense", properties),
                     GetValueOrDefault<std::string>("skill", properties),
@@ -45,6 +47,7 @@ private:
                     GetValueOrDefault<std::string>("name", properties),
                     GetValueOrDefault<std::string>("description", properties),
                     GetValueOrDefault<int>("sell_price", properties),
+                    GetValueOrDefault<bool>("isStackable", properties),
                     GetValueOrDefault<int>("level", properties),
                     GetValueOrDefault<int>("defense", properties),
                     GetValueOrDefault<std::string>("skill", properties),
