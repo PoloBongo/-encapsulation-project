@@ -1,5 +1,6 @@
 #include "Parsing.h"
 #include "ParsingDatabase.h"
+#include "FunctionMacro.h"
 
 Parsing::Parsing(const std::string& filePath) : filePath(filePath) {
     try {
@@ -165,27 +166,29 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
                 DataExtraction dataExtraction;
 
                 functionMap = {
-                    { "type", [&](const std::string& value) { RegisterField("type", dataExtraction.type, value); } },
-                    { "id", [&](const std::string& value) { RegisterField("id", dataExtraction.id, value); }},
-                    { "quantity", [&](const std::string& value) { RegisterField("quantity", dataExtraction.quantity, value); } },
-                    { "damage", [&](const std::string& value) { RegisterField("damage", dataExtraction.damage, value); } },
-                    { "durability", [&](const std::string& value) { RegisterField("durability", dataExtraction.durability, value); } },
-                    { "resistance", [&](const std::string& value) { RegisterField("resistance", dataExtraction.resistance, value); } },
-                    { "sell_price", [&](const std::string& value) { RegisterField("sell_price", dataExtraction.sell_price, value); } },
-                    { "level", [&](const std::string& value) { RegisterField("level", dataExtraction.level, value); } },
-                    { "defense", [&](const std::string& value) { RegisterField("defense", dataExtraction.defense, value); } },
-                    { "skill", [&](const std::string& value) { RegisterField("skill", dataExtraction.skill, value); } },
-                    { "attack", [&](const std::string& value) { RegisterField("attack", dataExtraction.attack, value); } },
-                    { "crit_rate", [&](const std::string& value) { RegisterField("crit_rate", dataExtraction.crit_rate, value); } },
-                    { "crit_damage", [&](const std::string& value) { RegisterField("crit_damage", dataExtraction.crit_damage, value); } },
-                    { "accuracy", [&](const std::string& value) { RegisterField("accuracy", dataExtraction.accuracy, value); } },
-                    { "cooldown_reduction", [&](const std::string& value) { RegisterField("cooldown_reduction", dataExtraction.cooldown_reduction, value); } },
-                    { "life_steal", [&](const std::string& value) { RegisterField("life_steal", dataExtraction.life_steal, value); } },
-                    { "attack_speed", [&](const std::string& value) { RegisterField("attack_speed", dataExtraction.attack_speed, value); } },
-                    { "item_type", [&](const std::string& value) { RegisterField("item_type", dataExtraction.item_type, value); } },
-                    { "weapon_type", [&](const std::string& value) { RegisterField("weapon_type", dataExtraction.weapon_type, value); } },
-                    { "armor_type", [&](const std::string& value) { RegisterField("armor_type", dataExtraction.armor_type, value); } }
+                    REGISTER_FIELD_INVENTORY("type", type),
+                    REGISTER_FIELD_INVENTORY("id", id),
+                    REGISTER_FIELD_INVENTORY("quantity", quantity),
+                    REGISTER_FIELD_INVENTORY("damage", damage),
+                    REGISTER_FIELD_INVENTORY("durability", durability),
+                    REGISTER_FIELD_INVENTORY("resistance", resistance),
+                    REGISTER_FIELD_INVENTORY("sell_price", sell_price),
+                    REGISTER_FIELD_INVENTORY("level", level),
+                    REGISTER_FIELD_INVENTORY("defense", defense),
+                    REGISTER_FIELD_INVENTORY("skill", skill),
+                    REGISTER_FIELD_INVENTORY("attack", attack),
+                    REGISTER_FIELD_INVENTORY("crit_rate", crit_rate),
+                    REGISTER_FIELD_INVENTORY("crit_damage", crit_damage),
+                    REGISTER_FIELD_INVENTORY("accuracy", accuracy),
+                    REGISTER_FIELD_INVENTORY("cooldown_reduction", cooldown_reduction),
+                    REGISTER_FIELD_INVENTORY("life_steal", life_steal),
+                    REGISTER_FIELD_INVENTORY("attack_speed", attack_speed),
+                    REGISTER_FIELD_INVENTORY("item_type", item_type),
+                    REGISTER_FIELD_INVENTORY("weapon_type", weapon_type),
+                    REGISTER_FIELD_INVENTORY("armor_type", armor_type)
                 };
+                #undef REGISTER_FIELD_INVENTORY
+
 
                 for (const auto& item : extractItem) {
                     const std::string& key = item.first;
