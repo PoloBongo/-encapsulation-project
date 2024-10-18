@@ -13,52 +13,20 @@ using ParsingOption = std::variant<int, float, std::string, bool>;
 class Parsing {
 public:
     Parsing() {};
-    Parsing(const std::string& filePath);
+    Parsing(const std::string& _filePath);
     bool LoadFile();
 
     std::vector<std::string> GetAllCategory() const;
-    std::unordered_map<std::string, std::string> GetItemsInformation(const std::string& sectionName) const;
-    std::string GetValueOfItem(const std::string& sectionName, const std::string& key) const;
+    std::unordered_map<std::string, std::string> GetItemsInformation(const std::string& _categoryName) const;
+    std::string GetValueOfItem(const std::string& _categoryName, const std::string& _key) const;
 
-    void AddNewData(const std::string& category, const std::string& key, const std::string& value);
-    void Modify(const std::string& category, const std::string& key, const std::string& value);
+    void AddNewData(const std::string& _category, const std::string& _key, const std::string& _value);
+    void Modify(const std::string& _category, const std::string& _key, const std::string& _value);
 
     std::unordered_map<std::string, DataExtraction> GetAllDataFromInventory();
 
-    template<typename T>
-    void RegisterField(const std::string& key, T& field, const std::string& value) {
-        try {
-            if constexpr (std::is_same_v<T, int>) {
-                field = std::stoi(value);
-            }
-            else if constexpr (std::is_same_v<T, float>) {
-                field = std::stof(value);
-            }
-            else if constexpr (std::is_same_v<T, bool>) {
-                if (value == "true") {
-                    field = true;
-                }
-                else if (value == "false") {
-                    field = false;
-                }
-                else {
-                    throw std::invalid_argument("Valeur non valide pour un booléen");
-                }
-            }
-            else if constexpr (std::is_same_v<T, std::string>) {
-                field = value;
-            }
-            else {
-                throw std::invalid_argument("Type non supporté");
-            }
-        }
-        catch (const std::exception& e) {
-            std::cerr << "Erreur lors de la conversion du champ '" << key << "' : " << e.what() << std::endl;
-        }
-    }
-
-    void SetItemDetail(const DataExtraction& item);
-    void ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& items, const std::string& itemName);
+    void SetItemDetail(const DataExtraction& _item);
+    void ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& _items, const std::string& _itemName);
     void ShowTargetItems();
 
     std::vector<std::vector<std::pair<std::string, ParsingOption>>> GetListItems();
@@ -70,5 +38,6 @@ private:
     std::string Trim(const std::string &str);
     std::string filePath;
     std::string newType;
+    int newID;
     std::ifstream file;
 };

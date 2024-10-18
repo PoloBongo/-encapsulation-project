@@ -2,9 +2,9 @@
 #include "ParsingDatabase.h"
 #include "FunctionMacro.h"
 
-Parsing::Parsing(const std::string& filePath) : filePath(filePath) {
+Parsing::Parsing(const std::string& _filePath) : filePath(_filePath) {
     try {
-        file.open(filePath);
+        file.open(_filePath);
     }
     catch (const std::exception& e)
     {
@@ -12,8 +12,8 @@ Parsing::Parsing(const std::string& filePath) : filePath(filePath) {
     }
 };
 
-std::string Parsing::Trim(std::string const &str) {
-    std::string trim = str;
+std::string Parsing::Trim(std::string const &_str) {
+    std::string trim = _str;
     trim.erase(std::remove_if(trim.begin(), trim.end(), ::isspace), trim.end());
     return trim;
 }
@@ -57,8 +57,8 @@ std::vector<std::string> Parsing::GetAllCategory() const {
     return categories;
 }
 
-std::unordered_map<std::string, std::string> Parsing::GetItemsInformation(const std::string& sectionName) const {
-    auto getItemsInfo = data.find(sectionName);
+std::unordered_map<std::string, std::string> Parsing::GetItemsInformation(const std::string& _categoryName) const {
+    auto getItemsInfo = data.find(_categoryName);
     if (getItemsInfo != data.end()) {
         return getItemsInfo->second;
     }
@@ -67,10 +67,10 @@ std::unordered_map<std::string, std::string> Parsing::GetItemsInformation(const 
     }
 }
 
-std::string Parsing::GetValueOfItem(const std::string& sectionName, const std::string& key) const {
-    auto targetItemCategory = data.find(sectionName);
+std::string Parsing::GetValueOfItem(const std::string& _categoryName, const std::string& _key) const {
+    auto targetItemCategory = data.find(_categoryName);
     if (targetItemCategory != data.end()) {
-        auto keyIt = targetItemCategory->second.find(key);
+        auto keyIt = targetItemCategory->second.find(_key);
         if (keyIt != targetItemCategory->second.end()) {
             return keyIt->second;
         }
@@ -78,7 +78,7 @@ std::string Parsing::GetValueOfItem(const std::string& sectionName, const std::s
     return "";
 }
 
-void Parsing::AddNewData(const std::string& category, const std::string& key, const std::string& value) {
+void Parsing::AddNewData(const std::string& _category, const std::string& _key, const std::string& _value) {
 
     std::ifstream file(filePath);
     std::vector<std::string> lines;
@@ -89,13 +89,13 @@ void Parsing::AddNewData(const std::string& category, const std::string& key, co
     if (file.is_open())
     {
         while (std::getline(file, line)) {
-            if (line == "[" + category + "]") {
+            if (line == "[" + _category + "]") {
                 categoryFound = true;
             }
             // catégorie trouvé mais la clé existe pas encore, on l'écrit
             else if (line.find("[") == 0 && categoryFound) {
                 if (!keyWritten) {
-                    lines.push_back(key + " = " + value);
+                    lines.push_back(_key + " = " + _value);
                     keyWritten = true;
                 }
                 categoryFound = false;
@@ -109,8 +109,8 @@ void Parsing::AddNewData(const std::string& category, const std::string& key, co
 
     // créer la catégorie si elle n'existe pas
     if (!categoryFound && !keyWritten) {
-        lines.push_back("\n[" + category + "]");
-        lines.push_back(key + " = " + value);
+        lines.push_back("\n[" + _category + "]");
+        lines.push_back(_key + " = " + _value);
     }
 
     // ré-écrire dans le fichier les nouvelles data
@@ -161,7 +161,8 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
     std::unordered_map<std::string, DataExtraction> items;
     if (!data.empty()) {
         for (const auto& datas : data) {
-            auto extractItem = GetItemsInformation(datas.first);
+            const std::string& categoryName = datas.first;
+            auto extractItem = GetItemsInformation(categoryName);
             if (!extractItem.empty()) {
                 DataExtraction dataExtraction;
 
@@ -198,7 +199,11 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
                         if (key == "type") {
                             newType = value;
                         }
-                        if (key == "id" && !newType.empty()) parsingDatabase.JointureFile(dataExtraction, functionMap, *this, std::stoi(value));
+                        if (key == "id" && !newType.empty())
+                        {
+                            newID = std::stoi(value);
+                            parsingDatabase.JointureFile(dataExtraction, functionMap, newID);
+                        }
                         functionMap[key](value);
                     }
                     else {
@@ -206,7 +211,7 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
                     }
                 }
 
-                items[datas.first] = dataExtraction;
+                items[categoryName] = dataExtraction;
             }
         }
     }
@@ -246,13 +251,13 @@ void Parsing::SetItemDetail(const DataExtraction& _item) {
     listItems.push_back(item);
 }
 
-void Parsing::ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& items, const std::string& itemName) {
-    auto item = items.find(itemName);
-    if (item != items.end()) {
+void Parsing::ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& _items, const std::string& _itemName) {
+    auto item = _items.find(_itemName);
+    if (item != _items.end()) {
         SetItemDetail(item->second);
     }
     else {
-        std::cout << "Item " << itemName << " pas trouve" << std::endl;
+        std::cout << "Item " << _itemName << " pas trouve" << std::endl;
     }
 }
 
