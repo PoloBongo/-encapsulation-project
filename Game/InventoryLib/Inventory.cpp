@@ -83,8 +83,11 @@ void Inventory::ShowInventory()
 		case ItemType::item_Armor:
 			PrintArmor(std::dynamic_pointer_cast<Armor>(items[i].first), items[i].second, i);
 			break;
-		default:
+		case ItemType::item_Consumable:
+		case ItemType::item_Miscellaneous:
 			PrintItem(items[i].first, items[i].second, i, WHITE);
+			break;
+		default:
 			break;
 		}
 		std::cout << std::endl;
