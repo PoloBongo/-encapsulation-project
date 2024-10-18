@@ -2,9 +2,13 @@
 #include "FunctionMacro.h"
 #include <functional>
 
-ParsingDatabase::ParsingDatabase(const std::string& filePath) : filePath(filePath) {
+ParsingDatabase::ParsingDatabase(const std::string& _filePath, bool _canExtract) : filePath(_filePath), canExtract(_canExtract) {
     try {
         file.open(filePath);
+        if (!file.is_open())
+        {
+            throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier" + filePath);
+        }
         LoadFile();
     }
     catch (const std::exception& e)
@@ -13,14 +17,15 @@ ParsingDatabase::ParsingDatabase(const std::string& filePath) : filePath(filePat
     }
 };
 
-std::string ParsingDatabase::Trim(std::string const& str) {
-    std::string trim = str;
+std::string ParsingDatabase::Trim(std::string const& _str) {
+    std::string trim = _str;
     trim.erase(std::remove_if(trim.begin(), trim.end(), ::isspace), trim.end());
     return trim;
 }
 
 bool ParsingDatabase::LoadFile() {
     if (!file.is_open()) {
+        std::cerr << "le fichier n'a pas ete pre-alablement ouvert dans le constructeur" << std::endl;
         return false;
     }
 
@@ -35,7 +40,6 @@ bool ParsingDatabase::LoadFile() {
 
         if (line[0] == '(' && line.back() == ')') {
             currentType = line.substr(1, line.size() - 2);
-            test.push_back(currentType);
         }
         else if (!currentType.empty()) {
             size_t pos = line.find('=');
@@ -51,50 +55,56 @@ bool ParsingDatabase::LoadFile() {
     return true;
 }
 
-std::unordered_map<std::string, std::string> ParsingDatabase::GetItemsInformation(const std::string& sectionName) const {
-    auto getItemsInfo = data.find(sectionName);
+std::unordered_map<std::string, std::string> ParsingDatabase::GetItemsInformation(const std::string& _categoryName) const {
+    auto getItemsInfo = data.find(_categoryName);
     if (getItemsInfo != data.end()) {
         return getItemsInfo->second;
     }
     else {
+        std::cerr << "La category <" << _categoryName << "> n'a pas ete trouve" << std::endl;
         return {};
     }
 }
 
-void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unordered_map<std::string, std::function<void(const std::string&)>> _funcMap, Parsing& _parsing, int _itemID)
+void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unordered_map<std::string, std::function<void(const std::string&)>> _funcMap, int _itemID)
 {
-    if (!data.empty()) {
-        for (const auto& datas : data) {
-            auto extractItem = GetItemsInformation(datas.first);
-            if (!extractItem.empty()) {
-                _funcMap = {
-                    REGISTER_FIELD_DATABASE("id", id),
-                    REGISTER_FIELD_DATABASE("name", name),
-                    REGISTER_FIELD_DATABASE("description", description),
-                    REGISTER_FIELD_DATABASE("isStackable", isStackable)
-                };
-                #undef REGISTER_FIELD_DATABASE
+    if (data.empty()) {
+        std::cerr << "Aucune donnee n'a ete extrait de la database" << std::endl;
+    }
 
-                canExtract = false;
+    for (const auto& datas : data) {
+        auto extractItem = GetItemsInformation(datas.first);
+        if (extractItem.empty()) {
+            std::cerr << "aucun item trouve pour la category <" << datas.first << ">" << std::endl;
+            continue;
+        }
 
-                for (const auto& item : extractItem) {
-                    const std::string& key = item.first;
-                    const std::string& value = item.second;
+        _funcMap = {
+                REGISTER_FIELD_DATABASE("id", id),
+                REGISTER_FIELD_DATABASE("name", name),
+                REGISTER_FIELD_DATABASE("description", description),
+                REGISTER_FIELD_DATABASE("isStackable", isStackable)
+        };
+#undef REGISTER_FIELD_DATABASE
 
-                    if (_funcMap.find(key) != _funcMap.end()) {
-                        if (key == "id")
-                        {
-                            if (std::stoi(value) == _itemID)
-                            {
-                                canExtract = true;
-                            }
-                        }
-                        if (canExtract) _funcMap[key](value);
-                    }
-                    else {
-                        std::cout << "Cle inconnue: " << key << std::endl;
+        canExtract = false;
+
+        for (const auto& item : extractItem) {
+            const std::string& key = item.first;
+            const std::string& value = item.second;
+
+            if (_funcMap.find(key) != _funcMap.end()) {
+                if (key == "id")
+                {
+                    if (std::stoi(value) == _itemID)
+                    {
+                        canExtract = true;
                     }
                 }
+                if (canExtract) _funcMap[key](value);
+            }
+            else {
+                std::cerr << "Cle inconnue: " << key << std::endl;
             }
         }
     }

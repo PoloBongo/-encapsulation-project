@@ -25,4 +25,9 @@ struct DataExtraction {
     int item_type = -0;
     int weapon_type = -0;
     int armor_type = -0;
+    int items_count = -0;
+    int health = -0;
+    int dodge_rate = -0;
+    int health_regen = -0;
+    int luck = -0;
 };
