@@ -69,9 +69,9 @@ void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unorder
             if (!extractItem.empty()) {
                 _funcMap = {
                     REGISTER_FIELD_DATABASE("id", id),
-                    REGISTER_FIELD_DATABASE("name", quantity),
-                    REGISTER_FIELD_DATABASE("description", damage),
-                    REGISTER_FIELD_DATABASE("isStackable", durability)
+                    REGISTER_FIELD_DATABASE("name", name),
+                    REGISTER_FIELD_DATABASE("description", description),
+                    REGISTER_FIELD_DATABASE("isStackable", isStackable)
                 };
                 #undef REGISTER_FIELD_DATABASE
 
