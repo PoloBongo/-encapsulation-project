@@ -6,31 +6,7 @@
 #include <unordered_map>
 #include <functional>
 #include <variant>
-
-struct DataExtraction {
-    std::string type = "";
-    std::string name = "";
-    std::string description = "";
-    std::string skill = "";
-    int id = -0;
-    int quantity = -0;
-    int damage = -0;
-    int durability = -0;
-    int resistance = -0;
-    int sell_price = -0;
-    int level = -0;
-    int defense = -0;
-    int attack = -0;
-    int attack_speed = -0;
-    int crit_rate = -0;
-    int crit_damage = -0;
-    int accuracy = -0;
-    int cooldown_reduction = -0;
-    int life_steal = -0;
-    int item_type = -0;
-    int weapon_type = -0;
-    int armor_type = -0;
-};
+#include "DataExtraction.h"
 
 using ParsingOption = std::variant<int, float, std::string>;
 
@@ -57,7 +33,6 @@ public:
     void ShowTargetItems();
 
     std::vector<std::vector<std::pair<std::string, ParsingOption>>> GetListItems();
-
 private:
     std::vector<std::vector<std::pair<std::string, ParsingOption>>> listItems;
     std::vector<std::pair<std::string, ParsingOption>> item;
@@ -65,5 +40,7 @@ private:
     std::unordered_map<std::string, std::unordered_map<std::string, std::string>> data;
     std::string Trim(const std::string &str);
     std::string filePath;
+    std::string newType;
+    int newID;
     std::ifstream file;
 };
