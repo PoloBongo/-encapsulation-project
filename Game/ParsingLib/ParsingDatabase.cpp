@@ -1,4 +1,5 @@
 #include "ParsingDatabase.h"
+#include "FunctionMacro.h"
 #include <functional>
 
 ParsingDatabase::ParsingDatabase(const std::string& filePath) : filePath(filePath) {
@@ -23,7 +24,6 @@ bool ParsingDatabase::LoadFile() {
         return false;
     }
 
-    std::string currentSection;
     std::string currentType;
     std::string line;
     while (std::getline(file, line)) {
@@ -31,10 +31,6 @@ bool ParsingDatabase::LoadFile() {
 
         if (line.empty() || line[0] == ';' || line[0] == '#') {
             continue;
-        }
-
-        if (line[0] == '[' && line.back() == ']') {
-            currentSection = line.substr(1, line.size() - 2);
         }
 
         if (line[0] == '(' && line.back() == ')') {
@@ -72,11 +68,12 @@ void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unorder
             auto extractItem = GetItemsInformation(datas.first);
             if (!extractItem.empty()) {
                 _funcMap = {
-                    { "id", [&](const std::string& value) { _parsing.RegisterField("id", _dataExtraction.id, value); } },
-                    { "name", [&](const std::string& value) { _parsing.RegisterField("name", _dataExtraction.name, value); } },
-                    { "description", [&](const std::string& value) { _parsing.RegisterField("description", _dataExtraction.description, value); }},
-                    { "isStackable", [&](const std::string& value) { _parsing.RegisterField("isStackable", _dataExtraction.isStackable, value); }},
+                    REGISTER_FIELD_DATABASE("id", id),
+                    REGISTER_FIELD_DATABASE("name", quantity),
+                    REGISTER_FIELD_DATABASE("description", damage),
+                    REGISTER_FIELD_DATABASE("isStackable", durability)
                 };
+                #undef REGISTER_FIELD_DATABASE
 
                 canExtract = false;
 
@@ -100,5 +97,5 @@ void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unorder
                 }
             }
         }
-    }    
+    }
 }
