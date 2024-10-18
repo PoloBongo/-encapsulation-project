@@ -1,8 +1,14 @@
 #include "Parsing.h"
+#include "ParsingDatabase.h"
+#include "FunctionMacro.h"
 
-Parsing::Parsing(const std::string& filePath) : filePath(filePath) {
+Parsing::Parsing(const std::string& _filePath) : filePath(_filePath) {
     try {
-        file.open(filePath);
+        file.open(_filePath);
+        if (!file.is_open())
+        {
+            throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier" + filePath);
+        }
     }
     catch (const std::exception& e)
     {
@@ -10,14 +16,15 @@ Parsing::Parsing(const std::string& filePath) : filePath(filePath) {
     }
 };
 
-std::string Parsing::Trim(std::string const &str) {
-    std::string trim = str;
+std::string Parsing::Trim(std::string const &_str) {
+    std::string trim = _str;
     trim.erase(std::remove_if(trim.begin(), trim.end(), ::isspace), trim.end());
     return trim;
 }
 
 bool Parsing::LoadFile() {
     if (!file.is_open()) {
+        std::cerr << "le fichier n'a pas ete pre-alablement ouvert dans le constructeur" << std::endl;
         return false;
     }
 
@@ -55,20 +62,21 @@ std::vector<std::string> Parsing::GetAllCategory() const {
     return categories;
 }
 
-std::unordered_map<std::string, std::string> Parsing::GetItemsInformation(const std::string& sectionName) const {
-    auto getItemsInfo = data.find(sectionName);
+std::unordered_map<std::string, std::string> Parsing::GetItemsInformation(const std::string& _categoryName) const {
+    auto getItemsInfo = data.find(_categoryName);
     if (getItemsInfo != data.end()) {
         return getItemsInfo->second;
     }
     else {
+        std::cerr << "La category <" << _categoryName << "> n'a pas ete trouve" << std::endl;
         return {};
     }
 }
 
-std::string Parsing::GetValueOfItem(const std::string& sectionName, const std::string& key) const {
-    auto targetItemCategory = data.find(sectionName);
+std::string Parsing::GetValueOfItem(const std::string& _categoryName, const std::string& _key) const {
+    auto targetItemCategory = data.find(_categoryName);
     if (targetItemCategory != data.end()) {
-        auto keyIt = targetItemCategory->second.find(key);
+        auto keyIt = targetItemCategory->second.find(_key);
         if (keyIt != targetItemCategory->second.end()) {
             return keyIt->second;
         }
@@ -76,7 +84,7 @@ std::string Parsing::GetValueOfItem(const std::string& sectionName, const std::s
     return "";
 }
 
-void Parsing::AddNewData(const std::string& category, const std::string& key, const std::string& value) {
+void Parsing::AddNewData(const std::string& _category, const std::string& _key, const std::string& _value) {
 
     std::ifstream file(filePath);
     std::vector<std::string> lines;
@@ -84,41 +92,46 @@ void Parsing::AddNewData(const std::string& category, const std::string& key, co
     bool categoryFound = false;
     bool keyWritten = false;
 
-    if (file.is_open())
+    if (!file.is_open())
     {
-        while (std::getline(file, line)) {
-            if (line == "[" + category + "]") {
-                categoryFound = true;
-            }
-            // catégorie trouvé mais la clé existe pas encore, on l'écrit
-            else if (line.find("[") == 0 && categoryFound) {
-                if (!keyWritten) {
-                    lines.push_back(key + " = " + value);
-                    keyWritten = true;
-                }
-                categoryFound = false;
-            }
+        throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier " + filePath);
+    }
 
-            lines.push_back(line);
+    while (std::getline(file, line)) {
+        if (line == "[" + _category + "]") {
+            categoryFound = true;
+        }
+        // catégorie trouvé mais la clé existe pas encore, on l'écrit
+        else if (line.find("[") == 0 && categoryFound) {
+            if (!keyWritten) {
+                lines.push_back(_key + " = " + _value);
+                keyWritten = true;
+            }
+            categoryFound = false;
         }
 
-        file.close();
+        lines.push_back(line);
     }
+
+    file.close();
 
     // créer la catégorie si elle n'existe pas
     if (!categoryFound && !keyWritten) {
-        lines.push_back("\n[" + category + "]");
-        lines.push_back(key + " = " + value);
+        lines.push_back("\n[" + _category + "]");
+        lines.push_back(_key + " = " + _value);
     }
 
     // ré-écrire dans le fichier les nouvelles data
     std::ofstream fileWrite(filePath, std::ios::trunc);
-    if (fileWrite.is_open()) {
-        for (const auto& outputLine : lines) {
-            fileWrite << outputLine << "\n";
-        }
-        fileWrite.close();
+    if (!fileWrite.is_open())
+    {
+        throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier pour ecrire dans " + filePath);
     }
+
+    for (const auto& outputLine : lines) {
+        fileWrite << outputLine << "\n";
+    }
+    fileWrite.close();
     
 }
 
@@ -128,107 +141,103 @@ void Parsing::Modify(const std::string& _category, const std::string& _key, cons
     std::string line;
     bool categoryFound = false;
 
-    if (file.is_open())
+    if (!file.is_open())
     {
-        while (std::getline(file, line)) {
-            if (line == "[" + _category + "]") {
-                categoryFound = true;
-            }
-            // si la catégorie est valide alors il update la clé et/ou sa valeur
-            else if (categoryFound && line.find(_key + " =") == 0) {
-                line = _key + " = " + _value;
-                categoryFound = false;
-            }
-            lines.push_back(line);
-        }
-
-        file.close();
+        throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier " + filePath);
     }
 
-    std::ofstream writeFile(filePath, std::ios::trunc);
-    if (writeFile.is_open()) {
-        for (const auto& outputLine : lines) {
-            writeFile << outputLine << "\n";
+    while (std::getline(file, line)) {
+        if (line == "[" + _category + "]") {
+            categoryFound = true;
         }
-        writeFile.close();
+        // si la catégorie est valide alors il update la clé et/ou sa valeur
+        else if (categoryFound && line.find(_key + " =") == 0) {
+            line = _key + " = " + _value;
+            categoryFound = false;
+        }
+        lines.push_back(line);
     }
-}
 
-template<typename T>
-void Parsing::RegisterField(const std::string& key, T& field, const std::string& value) {
-    try {
-        if constexpr (std::is_same_v<T, int>) {
-            field = std::stoi(value);
-        }
-        else if constexpr (std::is_same_v<T, float>) {
-            field = std::stof(value);
-        }
-        else if constexpr (std::is_same_v<T, std::string>) {
-            field = value;
-        }
-        else {
-            throw std::invalid_argument("Type non supporte");
-        }
-        std::cout << key << " = " << field << std::endl;
+    file.close();
+
+    std::ofstream fileWrite(filePath, std::ios::trunc);
+    if (!fileWrite.is_open())
+    {
+        throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier pour ecrire dans " + filePath);
     }
-    catch (const std::exception& e) {
-        std::cerr << "Erreur lors de la conversion du champ '" << key << "' : " << e.what() << std::endl;
+    for (const auto& outputLine : lines) {
+        fileWrite << outputLine << "\n";
     }
+    fileWrite.close();
 }
 
 std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory() {
-
+    ParsingDatabase parsingDatabase("database.ini");
     std::unordered_map<std::string, DataExtraction> items;
-    if (!data.empty()) {
-        for (const auto& datas : data) {
-            std::cout << "Categorie: " << datas.first << std::endl;
-            auto extractItem = GetItemsInformation(datas.first);
-            if (!extractItem.empty()) {
-                DataExtraction dataExtraction;
+    if (data.empty()) {
+        std::cerr << "Aucune donnee n'a ete extrait de la database" << std::endl;
+    }
+    for (const auto& datas : data) {
+        const std::string& categoryName = datas.first;
+        auto extractItem = GetItemsInformation(categoryName);
+        if (extractItem.empty()) {
+            std::cerr << "aucun item trouve pour la category <" << datas.first << ">" << std::endl;
+            continue;
+        }
 
-                functionMap = {
-                    { "type", [&](const std::string& value) { RegisterField("type", dataExtraction.type, value); } },
-                    { "id", [&](const std::string& value) { RegisterField("id", dataExtraction.id, value); }},
-                    { "quantity", [&](const std::string& value) { RegisterField("quantity", dataExtraction.quantity, value); } },
-                    { "damage", [&](const std::string& value) { RegisterField("damage", dataExtraction.damage, value); } },
-                    { "durability", [&](const std::string& value) { RegisterField("durability", dataExtraction.durability, value); } },
-                    { "resistance", [&](const std::string& value) { RegisterField("resistance", dataExtraction.resistance, value); } },
-                    { "name", [&](const std::string& value) { RegisterField("name", dataExtraction.name, value); } },
-                    { "description", [&](const std::string& value) { RegisterField("description", dataExtraction.description, value); } },
-                    { "sell_price", [&](const std::string& value) { RegisterField("sell_price", dataExtraction.sell_price, value); } },
-                    { "level", [&](const std::string& value) { RegisterField("level", dataExtraction.level, value); } },
-                    { "defense", [&](const std::string& value) { RegisterField("defense", dataExtraction.defense, value); } },
-                    { "skill", [&](const std::string& value) { RegisterField("skill", dataExtraction.skill, value); } },
-                    { "attack", [&](const std::string& value) { RegisterField("attack", dataExtraction.attack, value); } },
-                    { "crit_rate", [&](const std::string& value) { RegisterField("crit_rate", dataExtraction.crit_rate, value); } },
-                    { "crit_damage", [&](const std::string& value) { RegisterField("crit_damage", dataExtraction.crit_damage, value); } },
-                    { "accuracy", [&](const std::string& value) { RegisterField("accuracy", dataExtraction.accuracy, value); } },
-                    { "cooldown_reduction", [&](const std::string& value) { RegisterField("cooldown_reduction", dataExtraction.cooldown_reduction, value); } },
-                    { "life_steal", [&](const std::string& value) { RegisterField("life_steal", dataExtraction.life_steal, value); } },
-                    { "attack_speed", [&](const std::string& value) { RegisterField("attack_speed", dataExtraction.attack_speed, value); } },
-                    { "item_type", [&](const std::string& value) { RegisterField("item_type", dataExtraction.item_type, value); } },
-                    { "weapon_type", [&](const std::string& value) { RegisterField("weapon_type", dataExtraction.weapon_type, value); } },
-                    { "armor_type", [&](const std::string& value) { RegisterField("armor_type", dataExtraction.armor_type, value); } }
-                };
+        DataExtraction dataExtraction;
 
-                for (const auto& item : extractItem) {
-                    const std::string& key = item.first;
-                    const std::string& value = item.second;
+        functionMap = {
+            REGISTER_FIELD_INVENTORY("type", type),
+            REGISTER_FIELD_INVENTORY("id", id),
+            REGISTER_FIELD_INVENTORY("quantity", quantity),
+            REGISTER_FIELD_INVENTORY("damage", damage),
+            REGISTER_FIELD_INVENTORY("durability", durability),
+            REGISTER_FIELD_INVENTORY("resistance", resistance),
+            REGISTER_FIELD_INVENTORY("sell_price", sell_price),
+            REGISTER_FIELD_INVENTORY("level", level),
+            REGISTER_FIELD_INVENTORY("defense", defense),
+            REGISTER_FIELD_INVENTORY("skill", skill),
+            REGISTER_FIELD_INVENTORY("attack", attack),
+            REGISTER_FIELD_INVENTORY("crit_rate", crit_rate),
+            REGISTER_FIELD_INVENTORY("crit_damage", crit_damage),
+            REGISTER_FIELD_INVENTORY("accuracy", accuracy),
+            REGISTER_FIELD_INVENTORY("cooldown_reduction", cooldown_reduction),
+            REGISTER_FIELD_INVENTORY("life_steal", life_steal),
+            REGISTER_FIELD_INVENTORY("attack_speed", attack_speed),
+            REGISTER_FIELD_INVENTORY("item_type", item_type),
+            REGISTER_FIELD_INVENTORY("weapon_type", weapon_type),
+            REGISTER_FIELD_INVENTORY("armor_type", armor_type),
+            REGISTER_FIELD_INVENTORY("items_count", items_count),
+            REGISTER_FIELD_INVENTORY("health", health),
+            REGISTER_FIELD_INVENTORY("dodge_rate", dodge_rate),
+            REGISTER_FIELD_INVENTORY("health_regen", health_regen),
+            REGISTER_FIELD_INVENTORY("luck", luck)
+        };
+#undef REGISTER_FIELD_INVENTORY
 
-                    if (functionMap.find(key) != functionMap.end()) {
-                        functionMap[key](value);
-                    }
-                    else {
-                        std::cout << "Cle inconnue: " << key << std::endl;
-                    }
+
+        for (const auto& item : extractItem) {
+            const std::string& key = item.first;
+            const std::string& value = item.second;
+
+            if (functionMap.find(key) != functionMap.end()) {
+                if (key == "type") {
+                    newType = value;
                 }
-
-                items[datas.first] = dataExtraction;
+                if (key == "id" && !newType.empty())
+                {
+                    newID = std::stoi(value);
+                    parsingDatabase.JointureFile(dataExtraction, functionMap, newID);
+                }
+                functionMap[key](value);
+            }
+            else {
+                std::cout << "Cle inconnue: " << key << std::endl;
             }
         }
-    }
-    else {
-        std::cout << "data vide" << std::endl;
+
+        items[categoryName] = dataExtraction;
     }
 
     return items;
@@ -236,7 +245,6 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
 
 void Parsing::SetItemDetail(const DataExtraction& _item) {
     item.clear();
-    std::cout << "Item details:" << std::endl;
     if (!_item.type.empty()) item.emplace_back("type", _item.type);
     if (_item.id != -0) item.emplace_back("id", _item.id);
     if (_item.quantity != -0) item.emplace_back("quantity", _item.quantity);
@@ -259,18 +267,23 @@ void Parsing::SetItemDetail(const DataExtraction& _item) {
     if (_item.item_type != -0) item.emplace_back("item_type", _item.item_type);
     if (_item.weapon_type != -0) item.emplace_back("weapon_type", _item.weapon_type);
     if (_item.armor_type != -0) item.emplace_back("armor_type", _item.armor_type);
+    if (_item.items_count != -0) item.emplace_back("items_count", _item.items_count);
+    if (_item.health != -0) item.emplace_back("health", _item.health);
+    if (_item.dodge_rate != -0) item.emplace_back("dodge_rate", _item.dodge_rate);
+    if (_item.health_regen != -0) item.emplace_back("health_regen", _item.health_regen);
+    if (_item.luck != -0) item.emplace_back("luck", _item.luck);
+    item.emplace_back("isStackable", _item.isStackable);
 
     listItems.push_back(item);
 }
 
-void Parsing::ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& items, const std::string& itemName) {
-    auto item = items.find(itemName);
-    if (item != items.end()) {
-        std::cout << "Item trouve : " << itemName << std::endl;
+void Parsing::ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& _items, const std::string& _itemName) {
+    auto item = _items.find(_itemName);
+    if (item != _items.end()) {
         SetItemDetail(item->second);
     }
     else {
-        std::cout << "Item " << itemName << " pas trouve" << std::endl;
+        std::cerr << "Item " << _itemName << " pas trouve" << std::endl;
     }
 }
 
@@ -280,46 +293,15 @@ void Parsing::ShowTargetItems()
 
         std::unordered_map<std::string, DataExtraction> items = GetAllDataFromInventory();
         std::vector<std::string> sections = GetAllCategory();
-        std::cout << "Toutes les catégories:" << std::endl;
         for (const auto& section : sections) {
             ShowTargetItem(items, section);
         }
     }
     else {
-        std::cout << "fichier ini pas trouvé" << std::endl;
+        std::cerr << "fichier ini pas trouvé" << std::endl;
     }
 }
 
 std::vector<std::vector<std::pair<std::string, ParsingOption>>> Parsing::GetListItems() {
     return listItems;
-}
-
-void Parsing::Test()
-{
-    if (LoadFile()) {
-
-        std::vector<std::string> sections = GetAllCategory();
-        std::cout << "Toutes les catégories:" << std::endl;
-        for (const auto& section : sections) {
-            std::cout << "  " << section << std::endl;
-        }
-
-        std::string inventoryName = "inventory_1.item1";
-        auto items = GetItemsInformation(inventoryName);
-
-        if (!items.empty()) {
-            std::cout << "\nInformations sur l'item " << inventoryName << ":" << std::endl;
-            for (const auto& item : items) {
-                std::cout << "  " << item.first << " = " << item.second << std::endl;
-            }
-        }
-
-        std::cout << "\nInformation precise sur l'item " << inventoryName << " pour la cle 'type' : " << GetValueOfItem(inventoryName, "type") << std::endl;
-
-        AddNewData("inventory_1.item3", "type", "ignite");
-        Modify("inventory_1.item3", "damage", "10");
-    }
-    else {
-        std::cout << "fichier ini pas trouvé" << std::endl;
-    }
 }

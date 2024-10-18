@@ -150,7 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="database.ini" />
-    <None Include="test.ini" />
+    <None Include="inventory.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

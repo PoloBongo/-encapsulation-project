@@ -25,7 +25,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="test.ini" />
+    <None Include="inventory.ini" />
     <None Include="database.ini" />
   </ItemGroup>
 </Project>

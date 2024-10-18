@@ -6,58 +6,30 @@
 #include <unordered_map>
 #include <functional>
 #include <variant>
+#include "DataExtraction.h"
 
-struct DataExtraction {
-    std::string type = "";
-    std::string name = "";
-    std::string description = "";
-    std::string skill = "";
-    int id = -0;
-    int quantity = -0;
-    int damage = -0;
-    int durability = -0;
-    int resistance = -0;
-    int sell_price = -0;
-    int level = -0;
-    int defense = -0;
-    int attack = -0;
-    int attack_speed = -0;
-    int crit_rate = -0;
-    int crit_damage = -0;
-    int accuracy = -0;
-    int cooldown_reduction = -0;
-    int life_steal = -0;
-    int item_type = -0;
-    int weapon_type = -0;
-    int armor_type = -0;
-};
-
-using ParsingOption = std::variant<int, float, std::string>;
+using ParsingOption = std::variant<int, float, std::string, bool>;
 
 class Parsing {
 public:
     Parsing() {};
-    Parsing(const std::string& filePath);
+    Parsing(const std::string& _filePath);
     bool LoadFile();
 
     std::vector<std::string> GetAllCategory() const;
-    std::unordered_map<std::string, std::string> GetItemsInformation(const std::string& sectionName) const;
-    std::string GetValueOfItem(const std::string& sectionName, const std::string& key) const;
+    std::unordered_map<std::string, std::string> GetItemsInformation(const std::string& _categoryName) const;
+    std::string GetValueOfItem(const std::string& _categoryName, const std::string& _key) const;
 
-    void AddNewData(const std::string& category, const std::string& key, const std::string& value);
-    void Modify(const std::string& category, const std::string& key, const std::string& value);
-
-    void Test();
+    void AddNewData(const std::string& _category, const std::string& _key, const std::string& _value);
+    void Modify(const std::string& _category, const std::string& _key, const std::string& _value);
 
     std::unordered_map<std::string, DataExtraction> GetAllDataFromInventory();
-    template<typename T>
-    void RegisterField(const std::string& key, T& field, const std::string& value);
-    void SetItemDetail(const DataExtraction& item);
-    void ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& items, const std::string& itemName);
+
+    void SetItemDetail(const DataExtraction& _item);
+    void ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& _items, const std::string& _itemName);
     void ShowTargetItems();
 
     std::vector<std::vector<std::pair<std::string, ParsingOption>>> GetListItems();
-
 private:
     std::vector<std::vector<std::pair<std::string, ParsingOption>>> listItems;
     std::vector<std::pair<std::string, ParsingOption>> item;
@@ -65,5 +37,7 @@ private:
     std::unordered_map<std::string, std::unordered_map<std::string, std::string>> data;
     std::string Trim(const std::string &str);
     std::string filePath;
+    std::string newType;
+    int newID;
     std::ifstream file;
 };

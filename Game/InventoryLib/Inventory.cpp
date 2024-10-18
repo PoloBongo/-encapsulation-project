@@ -8,12 +8,15 @@ Inventory::Inventory()
 
 void Inventory::AddItem(const std::shared_ptr<Item>& _item, int _amount)
 {
-	for (int i = 0; i < items.size(); i++)
+	if (_item->GetStackable())
 	{
-		if (items[i].first->GetID() == _item->GetID())
+		for (int i = 0; i < items.size(); i++)
 		{
-			items[i].second += _amount;
-			return;
+			if (items[i].first->GetID() == _item->GetID())
+			{
+				items[i].second += _amount;
+				return;
+			}
 		}
 	}
 	items.push_back(std::make_pair(_item, _amount));
@@ -67,6 +70,31 @@ void Inventory::CreateItem(std::vector<std::vector<std::pair<std::string, Parsin
 			AddItem(item);
 		}
     }
+}
+
+
+void Inventory::ShowInventory()
+{
+	std::cout << "Inventory: " << std::endl;
+	for (int i = 0; i < items.size(); i++)
+	{
+		switch (items[i].first->GetItemType())
+		{
+		case ItemType::item_Weapon:
+			PrintWeapon(std::dynamic_pointer_cast<Weapon>(items[i].first), items[i].second, i);
+			break;
+		case ItemType::item_Armor:
+			PrintArmor(std::dynamic_pointer_cast<Armor>(items[i].first), items[i].second, i);
+			break;
+		case ItemType::item_Consumable:
+		case ItemType::item_Miscellaneous:
+			PrintItem(items[i].first, items[i].second, i, WHITE);
+			break;
+		default:
+			break;
+		}
+		std::cout << std::endl;
+	}
 }
 
 // Sorting functions
