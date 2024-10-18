@@ -90,6 +90,15 @@ struct CompareBy {
 	}
 };
 
+struct CompareByQuantity {
+	bool ascending = true;
+	CompareByQuantity(bool _ascending) : ascending(_ascending) {};
+	bool operator()(const std::pair<std::shared_ptr<Item>, int>& a, const std::pair<std::shared_ptr<Item>, int>& b)
+	{
+		return ascending ? a.second < b.second : a.second > b.second;
+	};
+};
+
 void Inventory::SortByID(bool _ascending) {
 	auto compareFunc = [](const std::shared_ptr<Item>& a, const std::shared_ptr<Item>& b) {
 		return a->GetID() < b->GetID();
@@ -242,8 +251,52 @@ void Inventory::SortByLuck(bool _ascending)
 	std::sort(items.begin(), items.end(), CompareBy<Armor, decltype(compareFunc)>(_ascending, compareFunc));
 }
 
+void Inventory::SortByQuantity(bool _ascending)
+{
+
+	std::sort(items.begin(), items.end(), CompareByQuantity(_ascending));
+}
 
 // Filter functions
+void Inventory::AddItemTypeFilter(ItemType _itemType)
+{
+	filters.push_back(_itemType);
+}
+
+void Inventory::RemoveItemTypeFilter(ItemType _itemType)
+{
+	for (int i = 0; i < filters.size(); i++)
+	{
+		filters.erase(filters.begin() + i);
+	}
+}
+
+void Inventory::RemoveFilteredItemFromInventory(std::shared_ptr<Item>& _itemToFilter)
+{
+	for (int i = 0; i < items.size(); i++)
+	{
+		if (items[i].first == _itemToFilter)
+		{
+			items.erase(items.begin()+ i);
+		}
+	}
+}
+
+void Inventory::FilterInventory()
+{
+	for (int i = 0; i < items.size(); i++)
+	{
+		if (std::find(filters.begin(), filters.end(), items[i].first->GetItemType()) == filters.end())
+		{
+			items_filtered.push_back(items[i]);
+		}
+	}
+	for (int i = 0; i < items_filtered.size(); i++)
+	{
+		RemoveFilteredItemFromInventory(items_filtered[i].first);
+	}
+}
+
 
 // Print functions
 
@@ -323,6 +376,27 @@ void Inventory::ShowInventory()
 			break;
 		default:
 			PrintItem(items[i].first, items[i].second, i, WHITE);
+			break;
+		}
+		std::cout << std::endl;
+	}
+}
+
+void Inventory::ShowInventoryTemp()
+{
+	std::cout << "Inventory: " << std::endl;
+	for (int i = 0; i < items_filtered.size(); i++)
+	{
+		switch (items_filtered[i].first->GetItemType())
+		{
+		case ItemType::item_Weapon:
+			PrintWeapon(std::dynamic_pointer_cast<Weapon>(items_filtered[i].first), items_filtered[i].second, i);
+			break;
+		case ItemType::item_Armor:
+			PrintArmor(std::dynamic_pointer_cast<Armor>(items_filtered[i].first), items_filtered[i].second, i);
+			break;
+		default:
+			PrintItem(items_filtered[i].first, items_filtered[i].second, i, WHITE);
 			break;
 		}
 		std::cout << std::endl;

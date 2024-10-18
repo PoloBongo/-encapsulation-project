@@ -86,5 +86,16 @@ int main()
 	std::cout << "\nSorting by Luck in ascending order.\n\n";
 	inventory_test->SortByLuck();
 	inventory_test->ShowInventory();
+	std::cout << "\Add filter by Weapon.\n\n";
+	inventory_test->AddItemTypeFilter(ItemType::item_Weapon);
+	inventory_test->FilterInventory();
+	inventory_test->ShowInventory();
+	inventory_test->ShowInventoryTemp();
+	inventory_test->ResetInventoryToNoFilters();
+	std::cout << "\Add filter by Armor.\n\n";
+	inventory_test->AddItemTypeFilter(ItemType::item_Armor);
+	inventory_test->FilterInventory();
+	inventory_test->ShowInventory();
+	inventory_test->ShowInventoryTemp();
 	return 0;
 }
