@@ -23,8 +23,6 @@ public:
     void AddNewData(const std::string& category, const std::string& key, const std::string& value);
     void Modify(const std::string& category, const std::string& key, const std::string& value);
 
-    void Test();
-
     std::unordered_map<std::string, DataExtraction> GetAllDataFromInventory();
     template<typename T>
     void RegisterField(const std::string& key, T& field, const std::string& value);

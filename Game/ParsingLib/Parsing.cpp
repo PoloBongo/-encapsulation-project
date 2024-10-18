@@ -170,7 +170,6 @@ void Parsing::RegisterField(const std::string& key, T& field, const std::string&
         else {
             throw std::invalid_argument("Type non supporte");
         }
-        std::cout << key << " = " << field << std::endl;
     }
     catch (const std::exception& e) {
         std::cerr << "Erreur lors de la conversion du champ '" << key << "' : " << e.what() << std::endl;
@@ -182,7 +181,6 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
     std::unordered_map<std::string, DataExtraction> items;
     if (!data.empty()) {
         for (const auto& datas : data) {
-            std::cout << "Categorie: " << datas.first << std::endl;
             auto extractItem = GetItemsInformation(datas.first);
             if (!extractItem.empty()) {
                 DataExtraction dataExtraction;
@@ -243,7 +241,6 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
 
 void Parsing::SetItemDetail(const DataExtraction& _item) {
     item.clear();
-    std::cout << "Item details:" << std::endl;
     if (!_item.type.empty()) item.emplace_back("type", _item.type);
     if (_item.id != -0) item.emplace_back("id", _item.id);
     if (_item.quantity != -0) item.emplace_back("quantity", _item.quantity);
@@ -273,7 +270,6 @@ void Parsing::SetItemDetail(const DataExtraction& _item) {
 void Parsing::ShowTargetItem(const std::unordered_map<std::string, DataExtraction>& items, const std::string& itemName) {
     auto item = items.find(itemName);
     if (item != items.end()) {
-        std::cout << "Item trouve : " << itemName << std::endl;
         SetItemDetail(item->second);
     }
     else {
@@ -287,7 +283,6 @@ void Parsing::ShowTargetItems()
 
         std::unordered_map<std::string, DataExtraction> items = GetAllDataFromInventory();
         std::vector<std::string> sections = GetAllCategory();
-        std::cout << "Toutes les catégories:" << std::endl;
         for (const auto& section : sections) {
             ShowTargetItem(items, section);
         }
@@ -299,34 +294,4 @@ void Parsing::ShowTargetItems()
 
 std::vector<std::vector<std::pair<std::string, ParsingOption>>> Parsing::GetListItems() {
     return listItems;
-}
-
-void Parsing::Test()
-{
-    if (LoadFile()) {
-
-        std::vector<std::string> sections = GetAllCategory();
-        std::cout << "Toutes les catégories:" << std::endl;
-        for (const auto& section : sections) {
-            std::cout << "  " << section << std::endl;
-        }
-
-        std::string inventoryName = "inventory_1.item1";
-        auto items = GetItemsInformation(inventoryName);
-
-        if (!items.empty()) {
-            std::cout << "\nInformations sur l'item " << inventoryName << ":" << std::endl;
-            for (const auto& item : items) {
-                std::cout << "  " << item.first << " = " << item.second << std::endl;
-            }
-        }
-
-        std::cout << "\nInformation precise sur l'item " << inventoryName << " pour la cle 'type' : " << GetValueOfItem(inventoryName, "type") << std::endl;
-
-        AddNewData("inventory_1.item3", "type", "ignite");
-        Modify("inventory_1.item3", "damage", "10");
-    }
-    else {
-        std::cout << "fichier ini pas trouvé" << std::endl;
-    }
 }
