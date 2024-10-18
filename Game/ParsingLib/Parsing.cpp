@@ -5,6 +5,10 @@
 Parsing::Parsing(const std::string& _filePath) : filePath(_filePath) {
     try {
         file.open(_filePath);
+        if (!file.is_open())
+        {
+            throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier" + filePath);
+        }
     }
     catch (const std::exception& e)
     {
@@ -20,6 +24,7 @@ std::string Parsing::Trim(std::string const &_str) {
 
 bool Parsing::LoadFile() {
     if (!file.is_open()) {
+        std::cerr << "le fichier n'a pas ete pre-alablement ouvert dans le constructeur" << std::endl;
         return false;
     }
 
@@ -63,6 +68,7 @@ std::unordered_map<std::string, std::string> Parsing::GetItemsInformation(const 
         return getItemsInfo->second;
     }
     else {
+        std::cerr << "La category <" << _categoryName << "> n'a pas ete trouve" << std::endl;
         return {};
     }
 }
@@ -86,26 +92,28 @@ void Parsing::AddNewData(const std::string& _category, const std::string& _key, 
     bool categoryFound = false;
     bool keyWritten = false;
 
-    if (file.is_open())
+    if (!file.is_open())
     {
-        while (std::getline(file, line)) {
-            if (line == "[" + _category + "]") {
-                categoryFound = true;
-            }
-            // catégorie trouvé mais la clé existe pas encore, on l'écrit
-            else if (line.find("[") == 0 && categoryFound) {
-                if (!keyWritten) {
-                    lines.push_back(_key + " = " + _value);
-                    keyWritten = true;
-                }
-                categoryFound = false;
-            }
+        throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier " + filePath);
+    }
 
-            lines.push_back(line);
+    while (std::getline(file, line)) {
+        if (line == "[" + _category + "]") {
+            categoryFound = true;
+        }
+        // catégorie trouvé mais la clé existe pas encore, on l'écrit
+        else if (line.find("[") == 0 && categoryFound) {
+            if (!keyWritten) {
+                lines.push_back(_key + " = " + _value);
+                keyWritten = true;
+            }
+            categoryFound = false;
         }
 
-        file.close();
+        lines.push_back(line);
     }
+
+    file.close();
 
     // créer la catégorie si elle n'existe pas
     if (!categoryFound && !keyWritten) {
@@ -115,12 +123,15 @@ void Parsing::AddNewData(const std::string& _category, const std::string& _key, 
 
     // ré-écrire dans le fichier les nouvelles data
     std::ofstream fileWrite(filePath, std::ios::trunc);
-    if (fileWrite.is_open()) {
-        for (const auto& outputLine : lines) {
-            fileWrite << outputLine << "\n";
-        }
-        fileWrite.close();
+    if (!fileWrite.is_open())
+    {
+        throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier pour ecrire dans " + filePath);
     }
+
+    for (const auto& outputLine : lines) {
+        fileWrite << outputLine << "\n";
+    }
+    fileWrite.close();
     
 }
 
@@ -130,93 +141,103 @@ void Parsing::Modify(const std::string& _category, const std::string& _key, cons
     std::string line;
     bool categoryFound = false;
 
-    if (file.is_open())
+    if (!file.is_open())
     {
-        while (std::getline(file, line)) {
-            if (line == "[" + _category + "]") {
-                categoryFound = true;
-            }
-            // si la catégorie est valide alors il update la clé et/ou sa valeur
-            else if (categoryFound && line.find(_key + " =") == 0) {
-                line = _key + " = " + _value;
-                categoryFound = false;
-            }
-            lines.push_back(line);
-        }
-
-        file.close();
+        throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier " + filePath);
     }
 
-    std::ofstream writeFile(filePath, std::ios::trunc);
-    if (writeFile.is_open()) {
-        for (const auto& outputLine : lines) {
-            writeFile << outputLine << "\n";
+    while (std::getline(file, line)) {
+        if (line == "[" + _category + "]") {
+            categoryFound = true;
         }
-        writeFile.close();
+        // si la catégorie est valide alors il update la clé et/ou sa valeur
+        else if (categoryFound && line.find(_key + " =") == 0) {
+            line = _key + " = " + _value;
+            categoryFound = false;
+        }
+        lines.push_back(line);
     }
+
+    file.close();
+
+    std::ofstream fileWrite(filePath, std::ios::trunc);
+    if (!fileWrite.is_open())
+    {
+        throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier pour ecrire dans " + filePath);
+    }
+    for (const auto& outputLine : lines) {
+        fileWrite << outputLine << "\n";
+    }
+    fileWrite.close();
 }
 
 std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory() {
     ParsingDatabase parsingDatabase("database.ini");
     std::unordered_map<std::string, DataExtraction> items;
-    if (!data.empty()) {
-        for (const auto& datas : data) {
-            const std::string& categoryName = datas.first;
-            auto extractItem = GetItemsInformation(categoryName);
-            if (!extractItem.empty()) {
-                DataExtraction dataExtraction;
+    if (data.empty()) {
+        std::cerr << "Aucune donnee n'a ete extrait de la database" << std::endl;
+    }
+    for (const auto& datas : data) {
+        const std::string& categoryName = datas.first;
+        auto extractItem = GetItemsInformation(categoryName);
+        if (extractItem.empty()) {
+            std::cerr << "aucun item trouve pour la category <" << datas.first << ">" << std::endl;
+            continue;
+        }
 
-                functionMap = {
-                    REGISTER_FIELD_INVENTORY("type", type),
-                    REGISTER_FIELD_INVENTORY("id", id),
-                    REGISTER_FIELD_INVENTORY("quantity", quantity),
-                    REGISTER_FIELD_INVENTORY("damage", damage),
-                    REGISTER_FIELD_INVENTORY("durability", durability),
-                    REGISTER_FIELD_INVENTORY("resistance", resistance),
-                    REGISTER_FIELD_INVENTORY("sell_price", sell_price),
-                    REGISTER_FIELD_INVENTORY("level", level),
-                    REGISTER_FIELD_INVENTORY("defense", defense),
-                    REGISTER_FIELD_INVENTORY("skill", skill),
-                    REGISTER_FIELD_INVENTORY("attack", attack),
-                    REGISTER_FIELD_INVENTORY("crit_rate", crit_rate),
-                    REGISTER_FIELD_INVENTORY("crit_damage", crit_damage),
-                    REGISTER_FIELD_INVENTORY("accuracy", accuracy),
-                    REGISTER_FIELD_INVENTORY("cooldown_reduction", cooldown_reduction),
-                    REGISTER_FIELD_INVENTORY("life_steal", life_steal),
-                    REGISTER_FIELD_INVENTORY("attack_speed", attack_speed),
-                    REGISTER_FIELD_INVENTORY("item_type", item_type),
-                    REGISTER_FIELD_INVENTORY("weapon_type", weapon_type),
-                    REGISTER_FIELD_INVENTORY("armor_type", armor_type)
-                };
-                #undef REGISTER_FIELD_INVENTORY
+        DataExtraction dataExtraction;
+
+        functionMap = {
+            REGISTER_FIELD_INVENTORY("type", type),
+            REGISTER_FIELD_INVENTORY("id", id),
+            REGISTER_FIELD_INVENTORY("quantity", quantity),
+            REGISTER_FIELD_INVENTORY("damage", damage),
+            REGISTER_FIELD_INVENTORY("durability", durability),
+            REGISTER_FIELD_INVENTORY("resistance", resistance),
+            REGISTER_FIELD_INVENTORY("sell_price", sell_price),
+            REGISTER_FIELD_INVENTORY("level", level),
+            REGISTER_FIELD_INVENTORY("defense", defense),
+            REGISTER_FIELD_INVENTORY("skill", skill),
+            REGISTER_FIELD_INVENTORY("attack", attack),
+            REGISTER_FIELD_INVENTORY("crit_rate", crit_rate),
+            REGISTER_FIELD_INVENTORY("crit_damage", crit_damage),
+            REGISTER_FIELD_INVENTORY("accuracy", accuracy),
+            REGISTER_FIELD_INVENTORY("cooldown_reduction", cooldown_reduction),
+            REGISTER_FIELD_INVENTORY("life_steal", life_steal),
+            REGISTER_FIELD_INVENTORY("attack_speed", attack_speed),
+            REGISTER_FIELD_INVENTORY("item_type", item_type),
+            REGISTER_FIELD_INVENTORY("weapon_type", weapon_type),
+            REGISTER_FIELD_INVENTORY("armor_type", armor_type),
+            REGISTER_FIELD_INVENTORY("items_count", items_count),
+            REGISTER_FIELD_INVENTORY("health", health),
+            REGISTER_FIELD_INVENTORY("dodge_rate", dodge_rate),
+            REGISTER_FIELD_INVENTORY("health_regen", health_regen),
+            REGISTER_FIELD_INVENTORY("luck", luck)
+        };
+#undef REGISTER_FIELD_INVENTORY
 
 
-                for (const auto& item : extractItem) {
-                    const std::string& key = item.first;
-                    const std::string& value = item.second;
-  
-                    if (functionMap.find(key) != functionMap.end()) {
-                        if (key == "type") {
-                            newType = value;
-                        }
-                        if (key == "id" && !newType.empty())
-                        {
-                            newID = std::stoi(value);
-                            parsingDatabase.JointureFile(dataExtraction, functionMap, newID);
-                        }
-                        functionMap[key](value);
-                    }
-                    else {
-                        std::cout << "Cle inconnue: " << key << std::endl;
-                    }
+        for (const auto& item : extractItem) {
+            const std::string& key = item.first;
+            const std::string& value = item.second;
+
+            if (functionMap.find(key) != functionMap.end()) {
+                if (key == "type") {
+                    newType = value;
                 }
-
-                items[categoryName] = dataExtraction;
+                if (key == "id" && !newType.empty())
+                {
+                    newID = std::stoi(value);
+                    parsingDatabase.JointureFile(dataExtraction, functionMap, newID);
+                }
+                functionMap[key](value);
+            }
+            else {
+                std::cout << "Cle inconnue: " << key << std::endl;
             }
         }
-    }
-    else {
-        std::cout << "data vide" << std::endl;
+
+        items[categoryName] = dataExtraction;
     }
 
     return items;
@@ -246,6 +267,11 @@ void Parsing::SetItemDetail(const DataExtraction& _item) {
     if (_item.item_type != -0) item.emplace_back("item_type", _item.item_type);
     if (_item.weapon_type != -0) item.emplace_back("weapon_type", _item.weapon_type);
     if (_item.armor_type != -0) item.emplace_back("armor_type", _item.armor_type);
+    if (_item.items_count != -0) item.emplace_back("items_count", _item.items_count);
+    if (_item.health != -0) item.emplace_back("health", _item.health);
+    if (_item.dodge_rate != -0) item.emplace_back("dodge_rate", _item.dodge_rate);
+    if (_item.health_regen != -0) item.emplace_back("health_regen", _item.health_regen);
+    if (_item.luck != -0) item.emplace_back("luck", _item.luck);
     item.emplace_back("isStackable", _item.isStackable);
 
     listItems.push_back(item);
@@ -257,7 +283,7 @@ void Parsing::ShowTargetItem(const std::unordered_map<std::string, DataExtractio
         SetItemDetail(item->second);
     }
     else {
-        std::cout << "Item " << _itemName << " pas trouve" << std::endl;
+        std::cerr << "Item " << _itemName << " pas trouve" << std::endl;
     }
 }
 
@@ -272,7 +298,7 @@ void Parsing::ShowTargetItems()
         }
     }
     else {
-        std::cout << "fichier ini pas trouvé" << std::endl;
+        std::cerr << "fichier ini pas trouvé" << std::endl;
     }
 }
 
