@@ -1,4 +1,5 @@
 #include "Parsing.h"
+#include "ParsingDatabase.h"
 
 Parsing::Parsing(const std::string& filePath) : filePath(filePath) {
     try {
@@ -177,7 +178,7 @@ void Parsing::RegisterField(const std::string& key, T& field, const std::string&
 }
 
 std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory() {
-
+    ParsingDatabase parsingDatabase("database.ini");
     std::unordered_map<std::string, DataExtraction> items;
     if (!data.empty()) {
         for (const auto& datas : data) {
@@ -193,8 +194,6 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
                     { "damage", [&](const std::string& value) { RegisterField("damage", dataExtraction.damage, value); } },
                     { "durability", [&](const std::string& value) { RegisterField("durability", dataExtraction.durability, value); } },
                     { "resistance", [&](const std::string& value) { RegisterField("resistance", dataExtraction.resistance, value); } },
-                    { "name", [&](const std::string& value) { RegisterField("name", dataExtraction.name, value); } },
-                    { "description", [&](const std::string& value) { RegisterField("description", dataExtraction.description, value); } },
                     { "sell_price", [&](const std::string& value) { RegisterField("sell_price", dataExtraction.sell_price, value); } },
                     { "level", [&](const std::string& value) { RegisterField("level", dataExtraction.level, value); } },
                     { "defense", [&](const std::string& value) { RegisterField("defense", dataExtraction.defense, value); } },
@@ -214,8 +213,16 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
                 for (const auto& item : extractItem) {
                     const std::string& key = item.first;
                     const std::string& value = item.second;
-
+  
                     if (functionMap.find(key) != functionMap.end()) {
+                        if (key == "type") {
+                            newType = value;
+                        }
+                        if (key == "id" && !newType.empty())
+                        {
+                            newID = std::stoi(value);
+                            parsingDatabase.JointureFile(dataExtraction, functionMap, *this, std::stoi(value));
+                        };
                         functionMap[key](value);
                     }
                     else {

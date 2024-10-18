@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DataExtraction.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Parsing.h" />
     <ClInclude Include="ParsingDatabase.h" />
