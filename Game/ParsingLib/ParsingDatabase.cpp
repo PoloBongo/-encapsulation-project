@@ -1,5 +1,4 @@
 #include "ParsingDatabase.h"
-#include "FunctionMacro.h"
 #include <functional>
 
 ParsingDatabase::ParsingDatabase(const std::string& _filePath, bool _canExtract) : filePath(_filePath), canExtract(_canExtract) {
@@ -80,12 +79,11 @@ void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unorder
         }
 
         _funcMap = {
-                REGISTER_FIELD_DATABASE("id", id),
-                REGISTER_FIELD_DATABASE("name", name),
-                REGISTER_FIELD_DATABASE("description", description),
-                REGISTER_FIELD_DATABASE("isStackable", isStackable)
+            { "id", [&](const std::string& value) { RegisterField("id", _dataExtraction.id, value); }},
+            { "name", [&](const std::string& value) { RegisterField("name", _dataExtraction.name, value); } },
+            { "description", [&](const std::string& value) { RegisterField("description", _dataExtraction.description, value); } },
+            { "isStackable", [&](const std::string& value) { RegisterField("isStackable", _dataExtraction.isStackable, value); } }
         };
-#undef REGISTER_FIELD_DATABASE
 
         canExtract = false;
 
