@@ -1,5 +1,4 @@
 #include "ParsingDatabase.h"
-#include "FunctionMacro.h"
 #include <functional>
 
 ParsingDatabase::ParsingDatabase(const std::string& _filePath, bool _canExtract) : filePath(_filePath), canExtract(_canExtract) {
@@ -66,7 +65,7 @@ std::unordered_map<std::string, std::string> ParsingDatabase::GetItemsInformatio
     }
 }
 
-void ParsingDatabase::JointureFile(DataExtraction& dataExtraction, std::unordered_map<std::string, std::function<void(const std::string&)>> _funcMap, int _itemID)
+void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unordered_map<std::string, std::function<void(const std::string&)>> _funcMap, int _itemID)
 {
     if (data.empty()) {
         std::cerr << "Aucune donnee n'a ete extrait de la database" << std::endl;
@@ -80,12 +79,11 @@ void ParsingDatabase::JointureFile(DataExtraction& dataExtraction, std::unordere
         }
 
         _funcMap = {
-                REGISTER_FIELD("id", id),
-                REGISTER_FIELD("name", name),
-                REGISTER_FIELD("description", description),
-                REGISTER_FIELD("isStackable", isStackable)
+            { "id", [&](const std::string& value) { RegisterField("id", _dataExtraction.id, value); }},
+            { "name", [&](const std::string& value) { RegisterField("name", _dataExtraction.name, value); } },
+            { "description", [&](const std::string& value) { RegisterField("description", _dataExtraction.description, value); } },
+            { "isStackable", [&](const std::string& value) { RegisterField("isStackable", _dataExtraction.isStackable, value); } }
         };
-#undef REGISTER_FIELD_DATABASE
 
         canExtract = false;
 
