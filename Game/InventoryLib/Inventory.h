@@ -43,6 +43,7 @@ public:
 	void AddItemTypeFilter(ItemType _itemType);
 	void RemoveItemTypeFilter(ItemType _itemType);
 	void FilterInventory();
+	void ResetInventoryToNoFilter();
 
 	//Sort functions
 	void SortByID(bool _ascending = true);

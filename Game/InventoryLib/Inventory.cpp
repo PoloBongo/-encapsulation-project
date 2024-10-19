@@ -113,31 +113,6 @@ void Inventory::ModifyValueOfItem(const std::string& _category, const std::strin
 	fileWrite.close();
 }
 
-
-void Inventory::ShowInventory()
-{
-	std::cout << "Inventory: " << std::endl;
-	for (int i = 0; i < items.size(); i++)
-	{
-		switch (items[i].first->GetItemType())
-		{
-		case ItemType::item_Weapon:
-			PrintWeapon(std::dynamic_pointer_cast<Weapon>(items[i].first), items[i].second, i);
-			break;
-		case ItemType::item_Armor:
-			PrintArmor(std::dynamic_pointer_cast<Armor>(items[i].first), items[i].second, i);
-			break;
-		case ItemType::item_Consumable:
-		case ItemType::item_Miscellaneous:
-			PrintItem(items[i].first, items[i].second, i, WHITE);
-			break;
-		default:
-			break;
-		}
-		std::cout << std::endl;
-	}
-}
-
 // Sorting functions
 template <typename T, typename CompareFunc>
 struct CompareBy {
@@ -366,6 +341,12 @@ void Inventory::FilterInventory()
 	}
 }
 
+void Inventory::ResetInventoryToNoFilter()
+{
+	items.insert(items.end(), items_filtered.begin(), items_filtered.end());
+	items_filtered.clear();
+}
+
 
 // Print functions
 
@@ -430,6 +411,7 @@ void Inventory::PrintEquipment(const std::shared_ptr<Equipment>& _equipment)
 }
 
 
+
 void Inventory::ShowInventory()
 {
 	std::cout << "Inventory: " << std::endl;
@@ -443,8 +425,11 @@ void Inventory::ShowInventory()
 		case ItemType::item_Armor:
 			PrintArmor(std::dynamic_pointer_cast<Armor>(items[i].first), items[i].second, i);
 			break;
-		default:
+		case ItemType::item_Consumable:
+		case ItemType::item_Miscellaneous:
 			PrintItem(items[i].first, items[i].second, i, WHITE);
+			break;
+		default:
 			break;
 		}
 		std::cout << std::endl;

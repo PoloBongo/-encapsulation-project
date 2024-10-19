@@ -68,13 +68,16 @@ int main()
 	inventory_test->AddItemTypeFilter(ItemType::item_Weapon);
 	inventory_test->FilterInventory();
 	inventory_test->ShowInventory();
-	inventory_test->ShowInventoryTemp();
-	inventory_test->ResetInventoryToNoFilters();
+	//inventory_test->ShowInventoryTemp();
+	std::cout << "\nSorting by Attack in Descending order.\n\n";
+	inventory_test->SortByAttack(false);
+	inventory_test->ShowInventory();
+	inventory_test->ResetInventoryToNoFilter();
 	std::cout << "\Add filter by Armor.\n\n";
 	inventory_test->AddItemTypeFilter(ItemType::item_Armor);
 	inventory_test->FilterInventory();
 	inventory_test->ShowInventory();
-	inventory_test->ShowInventoryTemp();
+	//inventory_test->ShowInventoryTemp();
 
 	inventory_test->ModifyValueOfItem("inventory_1.item5", "crit_damage", "30", parsing);
 
