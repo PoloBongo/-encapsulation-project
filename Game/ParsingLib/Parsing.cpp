@@ -24,7 +24,7 @@ std::string Parsing::Trim(std::string const &_str) {
 
 bool Parsing::LoadFile() {
     if (!file.is_open()) {
-        std::cerr << "le fichier n'a pas ete pre-alablement ouvert dans le constructeur" << std::endl;
+        std::cerr << "le fichier n'a pas ete prealablement ouvert dans le constructeur" << std::endl;
         return false;
     }
 
