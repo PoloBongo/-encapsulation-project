@@ -38,12 +38,10 @@ void Inventory::RemoveItem(const std::shared_ptr<Item>& _item, int _amount)
 	}
 }
 
-void Inventory::LoadInventory(const std::string& _filePath)
+void Inventory::LoadInventory(Parsing& _parsing)
 {
-	Parsing parsing(_filePath);
-
-	parsing.ShowTargetItems();
-	auto sections = parsing.GetListItems();
+	_parsing.ShowTargetItems();
+	auto sections = _parsing.GetListItems();
 
 	CreateItem(sections);
 }
@@ -70,6 +68,49 @@ void Inventory::CreateItem(std::vector<std::vector<std::pair<std::string, Parsin
 			AddItem(item);
 		}
     }
+}
+
+void Inventory::ModifyValueOfItem(const std::string& _category, const std::string& _key, const std::string& _value, Parsing& _parsing)
+{
+	std::string filePath = _parsing.GetFilePath();
+	if (filePath.empty())
+	{
+		std::cerr << "Le chemin d'acces au fichier n'a pas ete trouve" << std::endl;
+	}
+
+	std::ifstream file(_parsing.GetFilePath());
+	std::vector<std::string> lines;
+	std::string line;
+	bool categoryFound = false;
+
+	if (!file.is_open())
+	{
+		throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier " + filePath);
+	}
+
+	while (std::getline(file, line)) {
+		if (line == "[" + _category + "]") {
+			categoryFound = true;
+		}
+		// si la catégorie est valide alors il update la clé et/ou sa valeur
+		else if (categoryFound && line.find(_key + " =") == 0) {
+			line = _key + " = " + _value;
+			categoryFound = false;
+		}
+		lines.push_back(line);
+	}
+
+	file.close();
+
+	std::ofstream fileWrite(filePath, std::ios::trunc);
+	if (!fileWrite.is_open())
+	{
+		throw std::runtime_error("Un soucis est survenue lors de l'ouverture du fichier pour ecrire dans " + filePath);
+	}
+	for (const auto& outputLine : lines) {
+		fileWrite << outputLine << "\n";
+	}
+	fileWrite.close();
 }
 
 
