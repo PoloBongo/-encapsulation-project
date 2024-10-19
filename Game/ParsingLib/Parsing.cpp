@@ -188,33 +188,33 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
         DataExtraction dataExtraction;
 
         functionMap = {
-            REGISTER_FIELD_INVENTORY("type", type),
-            REGISTER_FIELD_INVENTORY("id", id),
-            REGISTER_FIELD_INVENTORY("quantity", quantity),
-            REGISTER_FIELD_INVENTORY("damage", damage),
-            REGISTER_FIELD_INVENTORY("durability", durability),
-            REGISTER_FIELD_INVENTORY("resistance", resistance),
-            REGISTER_FIELD_INVENTORY("sell_price", sell_price),
-            REGISTER_FIELD_INVENTORY("level", level),
-            REGISTER_FIELD_INVENTORY("defense", defense),
-            REGISTER_FIELD_INVENTORY("skill", skill),
-            REGISTER_FIELD_INVENTORY("attack", attack),
-            REGISTER_FIELD_INVENTORY("crit_rate", crit_rate),
-            REGISTER_FIELD_INVENTORY("crit_damage", crit_damage),
-            REGISTER_FIELD_INVENTORY("accuracy", accuracy),
-            REGISTER_FIELD_INVENTORY("cooldown_reduction", cooldown_reduction),
-            REGISTER_FIELD_INVENTORY("life_steal", life_steal),
-            REGISTER_FIELD_INVENTORY("attack_speed", attack_speed),
-            REGISTER_FIELD_INVENTORY("item_type", item_type),
-            REGISTER_FIELD_INVENTORY("weapon_type", weapon_type),
-            REGISTER_FIELD_INVENTORY("armor_type", armor_type),
-            REGISTER_FIELD_INVENTORY("items_count", items_count),
-            REGISTER_FIELD_INVENTORY("health", health),
-            REGISTER_FIELD_INVENTORY("dodge_rate", dodge_rate),
-            REGISTER_FIELD_INVENTORY("health_regen", health_regen),
-            REGISTER_FIELD_INVENTORY("luck", luck)
+            REGISTER_FIELD("type", type),
+            REGISTER_FIELD("id", id),
+            REGISTER_FIELD("quantity", quantity),
+            REGISTER_FIELD("damage", damage),
+            REGISTER_FIELD("durability", durability),
+            REGISTER_FIELD("resistance", resistance),
+            REGISTER_FIELD("sell_price", sell_price),
+            REGISTER_FIELD("level", level),
+            REGISTER_FIELD("defense", defense),
+            REGISTER_FIELD("skill", skill),
+            REGISTER_FIELD("attack", attack),
+            REGISTER_FIELD("crit_rate", crit_rate),
+            REGISTER_FIELD("crit_damage", crit_damage),
+            REGISTER_FIELD("accuracy", accuracy),
+            REGISTER_FIELD("cooldown_reduction", cooldown_reduction),
+            REGISTER_FIELD("life_steal", life_steal),
+            REGISTER_FIELD("attack_speed", attack_speed),
+            REGISTER_FIELD("item_type", item_type),
+            REGISTER_FIELD("weapon_type", weapon_type),
+            REGISTER_FIELD("armor_type", armor_type),
+            REGISTER_FIELD("items_count", items_count),
+            REGISTER_FIELD("health", health),
+            REGISTER_FIELD("dodge_rate", dodge_rate),
+            REGISTER_FIELD("health_regen", health_regen),
+            REGISTER_FIELD("luck", luck)
         };
-#undef REGISTER_FIELD_INVENTORY
+#undef REGISTER_FIELD
 
 
         for (const auto& item : extractItem) {

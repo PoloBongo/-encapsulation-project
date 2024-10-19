@@ -66,7 +66,7 @@ std::unordered_map<std::string, std::string> ParsingDatabase::GetItemsInformatio
     }
 }
 
-void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unordered_map<std::string, std::function<void(const std::string&)>> _funcMap, int _itemID)
+void ParsingDatabase::JointureFile(DataExtraction& dataExtraction, std::unordered_map<std::string, std::function<void(const std::string&)>> _funcMap, int _itemID)
 {
     if (data.empty()) {
         std::cerr << "Aucune donnee n'a ete extrait de la database" << std::endl;
@@ -80,10 +80,10 @@ void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unorder
         }
 
         _funcMap = {
-                REGISTER_FIELD_DATABASE("id", id),
-                REGISTER_FIELD_DATABASE("name", name),
-                REGISTER_FIELD_DATABASE("description", description),
-                REGISTER_FIELD_DATABASE("isStackable", isStackable)
+                REGISTER_FIELD("id", id),
+                REGISTER_FIELD("name", name),
+                REGISTER_FIELD("description", description),
+                REGISTER_FIELD("isStackable", isStackable)
         };
 #undef REGISTER_FIELD_DATABASE
 
