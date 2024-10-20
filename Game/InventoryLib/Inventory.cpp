@@ -38,38 +38,6 @@ void Inventory::RemoveItem(const std::shared_ptr<Item>& _item, int _amount)
 	}
 }
 
-void Inventory::LoadInventory(Parsing& _parsing)
-{
-	_parsing.ShowTargetItems();
-	auto sections = _parsing.GetListItems();
-
-	CreateItem(sections);
-}
-
-void Inventory::CreateItem(std::vector<std::vector<std::pair<std::string, ParsingOption>>>& _listItems) {
-	ItemBuild itemBuild;
-    for (const auto& listItem : _listItems) {
-        std::string type;
-
-		// stock le type pour le transmettre � "ItemBuild" qui pourra d�terminer c'est quel type d'item
-		// puis traiter en fonction du type d'item les valeurs � attribu�
-        for (const auto& [key, value] : listItem) {
-            std::visit([&](auto&& arg) {
-                if (key == "type") {
-                    if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::string>) {
-                        type = arg;
-                    }
-                }
-            }, value);
-        }
-
-		auto item = itemBuild.CreateItemByType(type, listItem);
-		if (item) {
-			AddItem(item);
-		}
-    }
-}
-
 void Inventory::ModifyValueOfItem(const std::string& _category, const std::string& _key, const std::string& _value, Parsing& _parsing)
 {
 	std::string filePath = _parsing.GetFilePath();
@@ -112,6 +80,40 @@ void Inventory::ModifyValueOfItem(const std::string& _category, const std::strin
 	}
 	fileWrite.close();
 }
+
+void Inventory::LoadInventory(Parsing& _parsing)
+{
+	_parsing.ShowTargetItems();
+	auto sections = _parsing.GetListItems();
+
+	CreateItem(sections);
+}
+
+void Inventory::CreateItem(std::vector<std::vector<std::pair<std::string, ParsingOption>>>& _listItems) {
+	ItemBuild itemBuild;
+    for (const auto& listItem : _listItems) {
+        std::string type;
+
+		// stock le type pour le transmettre � "ItemBuild" qui pourra d�terminer c'est quel type d'item
+		// puis traiter en fonction du type d'item les valeurs � attribu�
+        for (const auto& [key, value] : listItem) {
+            std::visit([&](auto&& arg) {
+                if (key == "type") {
+                    if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::string>) {
+                        type = arg;
+                    }
+                }
+            }, value);
+        }
+
+		auto item = itemBuild.CreateItemByType(type, listItem);
+		if (item) {
+			AddItem(item);
+		}
+    }
+}
+
+
 
 // Sorting functions
 template <typename T, typename CompareFunc>
@@ -302,16 +304,21 @@ void Inventory::SortByQuantity(bool _ascending)
 }
 
 // Filter functions
-void Inventory::AddItemTypeFilter(ItemType _itemType)
+void Inventory::AddItemFilter(ItemType _itemType, int _subtype)
 {
-	filters.push_back(_itemType);
+	ResetInventoryToNoFilter();
+	filters.push_back({ _itemType, _subtype });
 }
 
-void Inventory::RemoveItemTypeFilter(ItemType _itemType)
+void Inventory::RemoveItemFilter(ItemType _itemType, int _subtype)
 {
+	ResetInventoryToNoFilter();
 	for (int i = 0; i < filters.size(); i++)
 	{
-		filters.erase(filters.begin() + i);
+		if(filters[i].type == _itemType && filters[i].subtype == _subtype)
+		{
+			filters.erase(filters.begin() + i);
+		}
 	}
 }
 
@@ -332,7 +339,24 @@ void Inventory::FilterInventory()
 	{
 		if (std::find(filters.begin(), filters.end(), items[i].first->GetItemType()) == filters.end())
 		{
-			items_filtered.push_back(items[i]);
+			if(auto weapon = std::dynamic_pointer_cast<Weapon>(items[i].first))
+			{
+				if (std::find(filters.begin(), filters.end(), weapon->GetWeaponType()) == filters.end())
+				{
+					items_filtered.push_back(items[i]);
+				}
+			}
+			else if(auto armor = std::dynamic_pointer_cast<Armor>(items[i].first))
+			{
+				if (std::find(filters.begin(), filters.end(), armor->GetArmorType()) == filters.end())
+				{
+					items_filtered.push_back(items[i]);
+				}
+			}
+			else
+			{
+				items_filtered.push_back(items[i]);
+			}
 		}
 	}
 	for (int i = 0; i < items_filtered.size(); i++)
@@ -345,6 +369,12 @@ void Inventory::ResetInventoryToNoFilter()
 {
 	items.insert(items.end(), items_filtered.begin(), items_filtered.end());
 	items_filtered.clear();
+}
+
+void Inventory::ResetAllFilters()
+{
+	filters.clear();
+	ResetInventoryToNoFilter();
 }
 
 

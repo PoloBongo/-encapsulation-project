@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DataExtraction.h" />
+    <ClInclude Include="DataExtractionDatabase.h" />
     <ClInclude Include="Parsing.h" />
     <ClInclude Include="ParsingDatabase.h" />
   </ItemGroup>
