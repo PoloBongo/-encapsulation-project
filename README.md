@@ -11,3 +11,5 @@ Pour ajouter une nouvelle variable, il vous suffit de vous rendre dans DataExtra
 `Type(type, name, value)` par exemple : `Type(int, attack_pourcentage, -1)`.<br>Ensuite rendez-vous dans Parsing.cpp, cherchez la fonction GetAllDataFromInventory() puis dans la functionMap, ajouter simplement une nouvvelle ligne avec la variable que vous venez de créer.
 <br>`{ "attack_pourcentage", [&](const std::string& value) { RegisterField("attack_pourcentage", dataExtraction.attack_pourcentage, value); } }`<br>
 Et voilà le tour est joué !
+
+## InventoryLib
