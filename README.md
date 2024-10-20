@@ -115,8 +115,52 @@ isStackable = false</pre>
 
 ### Ajout d'une nouvelle variable
 
-Pour ajouter cette nouvelle variable (par exemple `weight`), il vous suffit de vous rendre dans DataExtraction.h puis d'ajouter cette ligne :<br>
+Pour ajouter cette nouvelle variable (par exemple `weight` à un Weapon), il vous suffit de vous rendre dans DataExtraction.h puis d'ajouter cette ligne :<br>
 `Type(type, name, value)` par exemple : `Type(int, weight, -1)`.<br>Ensuite rendez-vous dans Parsing.cpp, cherchez la fonction GetAllDataFromInventory() puis dans la functionMap, ajouter simplement une nouvelle ligne avec la variable que vous venez de créer.
 <br>`{ "weight", [&](const std::string& value) { RegisterField("weight", dataExtraction.weight, value); } }`<br>
 Vous pouvez ensuite utiliser ce nouveau paramètre comme les autres dans `inventory.ini`
 Et voilà le tour est joué pour la partie du ParsingLib mais il faut aussi faire les modifications dans l'InventoryLib pour ajouter cette variable à l'item.
+
+## Fonctionnalités de InventoryLib 
+
+- Ajouter un ou plusieurs filtre sur l'inventaire avec la fonction : <br>
+  `AddItemFilter(ItemType::item_Armor);` si pas de sous catégorie. <br>
+  `AddItemFilter(ItemType::item_Weapon,WeaponType::Katana);` avec une sous catégorie. <br>
+  
+> Filtres possible : `ItemType::item_Weapon` , `ItemType::item_Armor` , `ItemType::item_Consumable` , `ItemType::item_Miscellaneous` <br>
+> Sous catégorie de filtres possible : <br>
+> **Weapon Type** : `WeaponType::Sword` , `WeaponType::Axe` , `WeaponType::Katana` , `WeaponType::Mace` , `WeaponType::Dagger` <br>
+> **Armor Type** : `ArmorType::Helmet` , `ArmorType::Chestplate` , `ArmorType::Gloves` , `ArmorType::Leggings` , `ArmorType::Boots` <br> 
+
+- Choisir un tri qui sera soit croissant ou décroissant avec la fonction : <br>
+  `SortByPrice()` si croissant. <br>
+  `SortByPrice(false)` si décroissant. <br>
+
+> Tri possible : `ID` , `Name` , `Type` , `WeaponType` , `ArmorType` , `Price` ,  `Level` , `Defense` , `Attack` , `AttackSpeed` , `CritRate` , `CritDamage` , `Accuracy` , `CooldownReduction` , `LifeSteal` , `Health` , `DodgeRate` , `Resistance` , `HealthRegen` , `Luck` , `Quantity` <br>
+> 
+## Modifications de InventoryLib 
+
+### Ajout d'une nouvelle variable
+
+Pour ajouter notre variable `weigth` de l'exemple précédent, il faudra aller dans `ItemBuild.h` puis ajouter cette ligne à la catégorie correspondante :<br>
+Par exemple : `GetValueOrDefault<int>("weight", properties),` dans la catégorie "Weapon".<br> 
+Il faudra faire attention au type de la variable qui peut etre : `int` , `bool` , `float`, `double` , `std::string`.
+Ensuite il faudra ajouter cette variable à la classe correspondante et son constructeur. <br>
+Par exemple : Pour notre cas , il faudra donc aller sur `Weapon.h`, ajouter `int weight = 0;`, puis dans le constructeur ajouter `, int _weight = 0` et enfin créer le getteur pour cette nouvelle variable.
+
+### Ajout d'un nouveau tri 
+
+Si vous voulez aussi ajouter un nouveau tri pour cette variable , allez dans `Inventory.h` pour ajouter cette ligne : <br>
+`void SortByQuantity(bool _ascending = true);` <br>
+Puis aller dans `Inventory.cpp` et créer une fonction avec cette base et en modifiant les parties commentés: <br>
+1. Changer "Variable" par le nom de votre variable.
+2. Changer "Item" par "Weapon"/"Armor" selon la classe dans laquelle vous avez ajouté cette nouvelle variable.
+3. Changer "GetterVariable" par le Getter de votre variable.
+4. Pareil que le 2.
+```cpp
+void Inventory::SortBy/*Variable*/(bool _ascending) { // 1)
+	auto compareFunc = [](const std::shared_ptr</*Item*/>& a, const std::shared_ptr</*Item*/>& b) { // 2)
+		return a->/*GetterVariable*/() < b->/*GetterVariable*/(); // 3)
+		};
+	std::sort(items.begin(), items.end(), CompareBy</*Item*/, decltype(compareFunc)>(_ascending, compareFunc)); // 4)
+}```
