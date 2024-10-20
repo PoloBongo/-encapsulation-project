@@ -10,10 +10,10 @@
 
 using ParsingOption = std::variant<int, float, std::string, bool, double>;
 
-class Parsing {
+class ParsingInventory {
 public:
-    Parsing() {};
-    Parsing(const std::string& _filePath);
+    ParsingInventory() {};
+    ParsingInventory(const std::string& _filePath);
     bool LoadFile();
 
     std::vector<std::string> GetAllCategory() const;

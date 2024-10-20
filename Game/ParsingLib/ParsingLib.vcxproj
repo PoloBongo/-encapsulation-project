@@ -149,11 +149,11 @@
   <ItemGroup>
     <ClInclude Include="DataExtraction.h" />
     <ClInclude Include="DataExtractionDatabase.h" />
-    <ClInclude Include="Parsing.h" />
+    <ClInclude Include="ParsingInventory.h" />
     <ClInclude Include="ParsingDatabase.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Parsing.cpp" />
+    <ClCompile Include="ParsingInventory.cpp" />
     <ClCompile Include="ParsingDatabase.cpp" />
   </ItemGroup>
   <ItemGroup>

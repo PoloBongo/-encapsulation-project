@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "Parsing.h"
+#include "ParsingInventory.h"
 #include "Weapon.h"
 #include "Armor.h"
 

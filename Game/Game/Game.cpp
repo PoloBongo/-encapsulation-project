@@ -4,7 +4,7 @@
 
 int main()
 {
-	Parsing parsing("inventory.ini");
+	ParsingInventory parsing("inventory.ini");
 	std::shared_ptr<Inventory> inventory_test = std::shared_ptr<Inventory>(new Inventory());
 
 	inventory_test->LoadInventory(parsing);

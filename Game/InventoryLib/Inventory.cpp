@@ -38,7 +38,7 @@ void Inventory::RemoveItem(const std::shared_ptr<Item>& _item, int _amount)
 	}
 }
 
-void Inventory::ModifyValueOfItem(const std::string& _category, const std::string& _key, const std::string& _value, Parsing& _parsing)
+void Inventory::ModifyValueOfItem(const std::string& _category, const std::string& _key, const std::string& _value, ParsingInventory& _parsing)
 {
 	std::string filePath = _parsing.GetFilePath();
 	if (filePath.empty())
@@ -81,7 +81,7 @@ void Inventory::ModifyValueOfItem(const std::string& _category, const std::strin
 	fileWrite.close();
 }
 
-void Inventory::LoadInventory(Parsing& _parsing)
+void Inventory::LoadInventory(ParsingInventory& _parsing)
 {
 	_parsing.ShowTargetItems();
 	auto sections = _parsing.GetListItems();

@@ -47,8 +47,8 @@ public:
 
 	void AddItem(const std::shared_ptr<Item>& item, int _amount = 1);
 	void RemoveItem(const std::shared_ptr<Item>& item, int _amount = 1);
-	void LoadInventory(Parsing& _parsing);
-	void ModifyValueOfItem(const std::string& _category, const std::string& _key, const std::string& _value, Parsing& _parsing);
+	void LoadInventory(ParsingInventory& _parsing);
+	void ModifyValueOfItem(const std::string& _category, const std::string& _key, const std::string& _value, ParsingInventory& _parsing);
 
 	//Filter functions
 	void AddItemFilter(ItemType _itemType, int _subtype = -1);
