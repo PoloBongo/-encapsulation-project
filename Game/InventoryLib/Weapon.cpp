@@ -15,9 +15,9 @@ Weapon::Weapon(int _weapon_type, int _ID, std::string _name, std::string _desc, 
 	life_steal = _life_steal;
 }
 
-std::string Weapon::GetWeaponType() const
+std::string Weapon::GetWeaponTypeString(int _weapon_type)
 {
-	switch (weapon_type)
+	switch (_weapon_type)
 	{
 		case WeaponType::Sword:
 			return "Sword";
@@ -32,4 +32,5 @@ std::string Weapon::GetWeaponType() const
 		default:
 			return "Unknown";
 	}
+
 }

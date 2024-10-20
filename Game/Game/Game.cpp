@@ -64,20 +64,25 @@ int main()
 	std::cout << "\nSorting by Luck in ascending order.\n\n";
 	inventory_test->SortByLuck();
 	inventory_test->ShowInventory();
-	std::cout << "\Add filter by Weapon.\n\n";
-	inventory_test->AddItemTypeFilter(ItemType::item_Weapon);
+	std::cout << "\nAdd filter by Katana.\n\n";
+	inventory_test->AddItemFilter(ItemType::item_Weapon,WeaponType::Katana);
 	inventory_test->FilterInventory();
 	inventory_test->ShowInventory();
-	//inventory_test->ShowInventoryTemp();
 	std::cout << "\nSorting by Attack in Descending order.\n\n";
 	inventory_test->SortByAttack(false);
 	inventory_test->ShowInventory();
-	inventory_test->ResetInventoryToNoFilter();
-	std::cout << "\Add filter by Armor.\n\n";
-	inventory_test->AddItemTypeFilter(ItemType::item_Armor);
+	std::cout << "\nAdd filter by Armor.\n\n";
+	inventory_test->AddItemFilter(ItemType::item_Armor);
 	inventory_test->FilterInventory();
 	inventory_test->ShowInventory();
-	//inventory_test->ShowInventoryTemp();
+	inventory_test->PrintFilterList();
+	std::cout << "\nRemove filter by Katana.\n\n";
+	inventory_test->RemoveItemFilter(ItemType::item_Weapon, WeaponType::Katana);
+	inventory_test->FilterInventory();
+	inventory_test->ShowInventory();
+	std::cout << "\nReset All Filters.\n\n";
+	inventory_test->ResetAllFilters();
+	inventory_test->ShowInventory();
 
 	inventory_test->ModifyValueOfItem("inventory_1.item5", "crit_damage", "30", parsing);
 

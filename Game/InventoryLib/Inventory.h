@@ -13,12 +13,24 @@
 #define CYAN    "\033[36m"     
 #define WHITE   "\033[37m"     
 
+struct ItemFilter {
+	ItemType type = item_Miscellaneous;
+	int subtype = -1;
+
+	bool operator==(const ItemFilter& other) const {
+		return type == other.type && subtype == other.subtype;
+	}
+	bool operator==(const ItemType& itemType) const {
+		return type == itemType;
+	}
+};
+
 class Inventory
 {
 private:
 	std::vector<std::pair<std::shared_ptr<Item>, int>> items;
 	std::vector<std::pair<std::shared_ptr<Item>, int>> items_filtered;
-	std::vector<ItemType> filters;
+	std::vector<ItemFilter> filters;
 
 	std::unordered_map<std::string, std::function<void(const std::string&)>> functionMap;
 	void CreateItem(std::vector<std::vector<std::pair<std::string, ParsingOption>>>& _listItems);
@@ -32,7 +44,6 @@ public:
 	Inventory();
 	~Inventory() = default;
 	void ShowInventory();
-	void ShowInventoryTemp();
 
 	void AddItem(const std::shared_ptr<Item>& item, int _amount = 1);
 	void RemoveItem(const std::shared_ptr<Item>& item, int _amount = 1);
@@ -40,10 +51,13 @@ public:
 	void ModifyValueOfItem(const std::string& _category, const std::string& _key, const std::string& _value, Parsing& _parsing);
 
 	//Filter functions
-	void AddItemTypeFilter(ItemType _itemType);
-	void RemoveItemTypeFilter(ItemType _itemType);
+	void AddItemFilter(ItemType _itemType, int _subtype = -1);
+	void RemoveItemFilter(ItemType _itemType, int _subtype = -1);
 	void FilterInventory();
 	void ResetInventoryToNoFilter();
+	void ResetAllFilters();
+	bool IsItemFilterSubType(const std::shared_ptr<Item>& _item, const ItemFilter& _filter);
+	void PrintFilterList();
 
 	//Sort functions
 	void SortByID(bool _ascending = true);

@@ -28,4 +28,5 @@ public:
 	std::string GetDescription() const { return description; }
 	int GetSellPrice() const { return sell_price; }
 	ItemType GetItemType() const { return type; }
+	static std::string GetItemTypeString(int _item_type);
 };

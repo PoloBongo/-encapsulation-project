@@ -319,6 +319,10 @@ void Inventory::RemoveItemFilter(ItemType _itemType, int _subtype)
 		{
 			filters.erase(filters.begin() + i);
 		}
+		else
+		{
+			std::cout << "Filter not found" << std::endl;
+		}
 	}
 }
 
@@ -337,23 +341,14 @@ void Inventory::FilterInventory()
 {
 	for (int i = 0; i < items.size(); i++)
 	{
-		if (std::find(filters.begin(), filters.end(), items[i].first->GetItemType()) == filters.end())
+		auto it = std::find(filters.begin(), filters.end(), items[i].first->GetItemType());
+		if (it == filters.end())
 		{
-			if(auto weapon = std::dynamic_pointer_cast<Weapon>(items[i].first))
-			{
-				if (std::find(filters.begin(), filters.end(), weapon->GetWeaponType()) == filters.end())
-				{
-					items_filtered.push_back(items[i]);
-				}
-			}
-			else if(auto armor = std::dynamic_pointer_cast<Armor>(items[i].first))
-			{
-				if (std::find(filters.begin(), filters.end(), armor->GetArmorType()) == filters.end())
-				{
-					items_filtered.push_back(items[i]);
-				}
-			}
-			else
+			items_filtered.push_back(items[i]);
+		}
+		else
+		{
+			if (!IsItemFilterSubType(items[i].first, *it))
 			{
 				items_filtered.push_back(items[i]);
 			}
@@ -363,6 +358,29 @@ void Inventory::FilterInventory()
 	{
 		RemoveFilteredItemFromInventory(items_filtered[i].first);
 	}
+}
+
+bool Inventory::IsItemFilterSubType(const std::shared_ptr<Item>& _item, const ItemFilter& _filter)
+{
+	if(_filter.subtype == -1 || _filter.type == ItemType::item_Consumable || _filter.type == ItemType::item_Miscellaneous)
+	{
+		return true;
+	}
+	if (_filter.type == ItemType::item_Weapon) {
+		if (auto weapon = std::dynamic_pointer_cast<Weapon>(_item)) {
+			if (weapon->GetWeaponType() == _filter.subtype) {
+				return true;
+			}
+		}
+	}
+	else if (_filter.type == ItemType::item_Armor) {
+		if (auto armor = std::dynamic_pointer_cast<Armor>(_item)) {
+			if (armor->GetArmorType() != _filter.subtype) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void Inventory::ResetInventoryToNoFilter()
@@ -375,6 +393,27 @@ void Inventory::ResetAllFilters()
 {
 	filters.clear();
 	ResetInventoryToNoFilter();
+}
+
+void Inventory::PrintFilterList()
+{
+	std::cout << "Filters: " << std::endl;
+	for (int i = 0; i < filters.size(); i++)
+	{
+		std::cout << i << ") " << "Type: " << Item::GetItemTypeString(filters[i].type);
+		if(filters[i].subtype != -1)
+		{
+			if (filters[i].type == ItemType::item_Weapon) {
+				std::cout << ", Subtype: " << Weapon::GetWeaponTypeString(filters[i].subtype);
+			}
+			else if (filters[i].type == ItemType::item_Armor) {
+				std::cout << ", Subtype: " << Armor::GetArmorTypeString(filters[i].subtype);
+			}
+		}
+		std::cout << std::endl;
+	}
+	std::cout << std::endl;
+
 }
 
 
@@ -397,13 +436,14 @@ void AppendIfNotZero(std::ostream& os, const std::string& label, const std::stri
 void Inventory::PrintWeapon(const std::shared_ptr<Weapon>& _weapon, const int _quantity, const int _num)
 {
 	PrintItem(_weapon, _quantity, _num, RED);
-	std::cout << " Weapon Type: " << _weapon->GetWeaponType() << std::endl;
+	std::cout << " Weapon Type: " << Weapon::GetWeaponTypeString(_weapon->GetWeaponType()) << std::endl;
 	PrintEquipment(_weapon);
 
 	AppendIfNotZero(std::cout, "Attack", _weapon->GetAttack());
 	AppendIfNotZero(std::cout, "Attack Speed", _weapon->GetAttackSpeed());
 	AppendIfNotZero(std::cout, "Critical Rate", _weapon->GetCritRate());
 	AppendIfNotZero(std::cout, "Critical Damage", _weapon->GetCritDamage());
+	std::cout << std::endl;
 	AppendIfNotZero(std::cout, "Accuracy", _weapon->GetAccuracy());
 	AppendIfNotZero(std::cout, "Cooldown Reduction", _weapon->GetCooldownReduction());
 	AppendIfNotZero(std::cout, "Life Steal", _weapon->GetLifeSteal());
@@ -414,13 +454,14 @@ void Inventory::PrintWeapon(const std::shared_ptr<Weapon>& _weapon, const int _q
 void Inventory::PrintArmor(const std::shared_ptr<Armor>& _armor, const int _quantity, const int _num)
 {
 	PrintItem(_armor, _quantity, _num, BLUE);
-	std::cout << " Armor Type: " << _armor->GetArmorType() << std::endl;
+	std::cout << " Armor Type: " << Armor::GetArmorTypeString(_armor->GetArmorType()) << std::endl;
 	PrintEquipment(_armor);
 
 	AppendIfNotZero(std::cout, "Health", _armor->GetHealth());
 	AppendIfNotZero(std::cout, "Dodge Rate", _armor->GetDodgeRate());
 	AppendIfNotZero(std::cout, "Resistance", _armor->GetResistance());
 	AppendIfNotZero(std::cout, "Health Regen", _armor->GetHealthRegen());
+	std::cout << std::endl;
 	AppendIfNotZero(std::cout, "Luck", _armor->GetLuck());
 	AppendIfNotZero(std::cout, "Skill", _armor->GetSkill());
 	std::cout << std::endl;
@@ -466,23 +507,3 @@ void Inventory::ShowInventory()
 	}
 }
 
-void Inventory::ShowInventoryTemp()
-{
-	std::cout << "Inventory: " << std::endl;
-	for (int i = 0; i < items_filtered.size(); i++)
-	{
-		switch (items_filtered[i].first->GetItemType())
-		{
-		case ItemType::item_Weapon:
-			PrintWeapon(std::dynamic_pointer_cast<Weapon>(items_filtered[i].first), items_filtered[i].second, i);
-			break;
-		case ItemType::item_Armor:
-			PrintArmor(std::dynamic_pointer_cast<Armor>(items_filtered[i].first), items_filtered[i].second, i);
-			break;
-		default:
-			PrintItem(items_filtered[i].first, items_filtered[i].second, i, WHITE);
-			break;
-		}
-		std::cout << std::endl;
-	}
-}
