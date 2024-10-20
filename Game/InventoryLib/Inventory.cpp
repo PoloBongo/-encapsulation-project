@@ -456,7 +456,6 @@ void Inventory::PrintArmor(const std::shared_ptr<Armor>& _armor, const int _quan
 	PrintItem(_armor, _quantity, _num, BLUE);
 	std::cout << " Armor Type: " << Armor::GetArmorTypeString(_armor->GetArmorType()) << std::endl;
 	PrintEquipment(_armor);
-
 	AppendIfNotZero(std::cout, "Health", _armor->GetHealth());
 	AppendIfNotZero(std::cout, "Dodge Rate", _armor->GetDodgeRate());
 	AppendIfNotZero(std::cout, "Resistance", _armor->GetResistance());

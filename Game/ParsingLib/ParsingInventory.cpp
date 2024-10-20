@@ -119,7 +119,11 @@ std::unordered_map<std::string, DataExtraction> ParsingInventory::GetAllDataFrom
             { "accuracy", [&](const std::string& value) { RegisterField("accuracy", dataExtraction.accuracy, value); } },
             { "cooldown_reduction", [&](const std::string& value) { RegisterField("cooldown_reduction", dataExtraction.cooldown_reduction, value); } },
             { "life_steal", [&](const std::string& value) { RegisterField("life_steal", dataExtraction.life_steal, value); } },
-            { "attack_speed", [&](const std::string& value) { RegisterField("attack_speed", dataExtraction.attack_speed, value); } }
+            { "attack_speed", [&](const std::string& value) { RegisterField("attack_speed", dataExtraction.attack_speed, value); } },
+            { "health", [&](const std::string& value) { RegisterField("health", dataExtraction.health, value); } },
+			{ "dodge_rate", [&](const std::string& value) { RegisterField("dodge_rate", dataExtraction.dodge_rate, value); } },
+			{ "health_regen", [&](const std::string& value) { RegisterField("health_regen", dataExtraction.health_regen, value); } },
+			{ "luck", [&](const std::string& value) { RegisterField("luck", dataExtraction.luck, value); } }
         };
 
         for (const auto& item : extractItem) {
