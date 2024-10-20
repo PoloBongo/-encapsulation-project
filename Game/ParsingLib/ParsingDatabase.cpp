@@ -83,7 +83,10 @@ void ParsingDatabase::JointureFile(DataExtraction& _dataExtraction, std::unorder
             { "id", [&](const std::string& value) { RegisterField("id", _dataExtraction.id, value); }},
             { "name", [&](const std::string& value) { RegisterField("name", _dataExtraction.name, value); } },
             { "description", [&](const std::string& value) { RegisterField("description", _dataExtraction.description, value); } },
-            { "isStackable", [&](const std::string& value) { RegisterField("isStackable", _dataExtraction.isStackable, value); } }
+            { "isStackable", [&](const std::string& value) { RegisterField("isStackable", _dataExtraction.isStackable, value); } },
+            { "item_type", [&](const std::string& value) { RegisterField("item_type", _dataExtraction.item_type, value); } },
+            { "weapon_type", [&](const std::string& value) { RegisterField("weapon_type", _dataExtraction.weapon_type, value); } },
+            { "armor_type", [&](const std::string& value) { RegisterField("armor_type", _dataExtraction.armor_type, value); } }
         };
 
         canExtract = false;

@@ -10,7 +10,7 @@ private:
     std::unordered_map<std::string, std::function<std::shared_ptr<Item>(const std::vector<std::pair<std::string, ParsingOption>>&)>>
         // chaque type d'item à une fonction lambda associé qui exécutera le constructeur de l'item en question
         createItem = {
-            {"Consumable", [&](const auto& properties) {
+            {"Item", [&](const auto& properties) {
                 return std::make_shared<Item>(
                     GetValueOrDefault<int>("item_type", properties),
                     GetValueOrDefault<int>("id", properties),
