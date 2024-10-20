@@ -3,7 +3,7 @@ Nous avons crée une bibliothèque ParsingLib qui permet d'extraire les données
 <br><br>
 ...InventoryLib
 <br><br>
-Vous pourrez retrouver la documentation des 2 librairies juste [ici](https://www.baimmobilier.fr/gtech3/encapsulation/Documentation/html/) !
+Vous pourrez retrouver la documentation des 2 librairies juste [ici](https://www.baimmobilier.fr/gtech3/encapsulation/Documentation/html/){:target="_blank"} !
 ## ParsingLib
 
 Pour ajouter une nouvelle variable, il vous suffit de vous rendre dans DataExtraction.h puis d'ajouter cette ligne :<br>
