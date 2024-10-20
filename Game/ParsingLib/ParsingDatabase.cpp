@@ -31,7 +31,7 @@ bool ParsingDatabase::LoadFile() {
     std::string currentType;
     std::string line;
     while (std::getline(file, line)) {
-        line = Trim(line);
+        line = line;
 
         if (line.empty() || line[0] == ';' || line[0] == '#') {
             continue;
@@ -44,7 +44,8 @@ bool ParsingDatabase::LoadFile() {
             size_t pos = line.find('=');
             if (pos != std::string::npos) {
                 std::string key = Trim(line.substr(0, pos));
-                std::string value = Trim(line.substr(pos + 1));
+                std::string value = line.substr(pos + 1);
+                value = value.erase(0, value.find_first_not_of(' '));
                 data[currentType][key] = value;
             }
         }
