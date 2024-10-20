@@ -8,7 +8,7 @@
 #include <variant>
 #include "DataExtraction.h"
 
-using ParsingOption = std::variant<int, float, std::string, bool>;
+using ParsingOption = std::variant<int, float, std::string, bool, double>;
 
 class Parsing {
 public:

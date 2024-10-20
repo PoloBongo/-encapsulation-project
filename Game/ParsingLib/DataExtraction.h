@@ -1,33 +1,38 @@
 #pragma once
 #include <string>
 
+#define DATA_FIELDS(Type) \
+    Type(std::string, type, "") \
+    Type(std::string, name, "") \
+    Type(std::string, description, "") \
+    Type(std::string, skill, "") \
+    Type(bool, isStackable, false) \
+    Type(int, id, -1) \
+    Type(int, quantity, -1) \
+    Type(int, damage, -1) \
+    Type(int, durability, -1) \
+    Type(int, resistance, -1) \
+    Type(int, sell_price, -1) \
+    Type(int, level, -1) \
+    Type(int, defense, -1) \
+    Type(int, attack, -1) \
+    Type(int, attack_speed, -1) \
+    Type(int, crit_rate, -1) \
+    Type(int, crit_damage, -1) \
+    Type(int, accuracy, -1) \
+    Type(int, cooldown_reduction, -1) \
+    Type(int, life_steal, -1) \
+    Type(int, item_type, -1) \
+    Type(int, weapon_type, -1) \
+    Type(int, armor_type, -1) \
+    Type(int, items_count, -1) \
+    Type(int, health, -1) \
+    Type(int, dodge_rate, -1) \
+    Type(int, health_regen, -1) \
+    Type(int, luck, -1)
+
 struct DataExtraction {
-    std::string type = "";
-    std::string name = "";
-    std::string description = "";
-    std::string skill = "";
-    bool isStackable;
-    int id = -1;
-    int quantity = -1;
-    int damage = -1;
-    int durability = -1;
-    int resistance = -1;
-    int sell_price = -1;
-    int level = -1;
-    int defense = -1;
-    int attack = -1;
-    int attack_speed = -1;
-    int crit_rate = -1;
-    int crit_damage = -1;
-    int accuracy = -1;
-    int cooldown_reduction = -1;
-    int life_steal = -1;
-    int item_type = -1;
-    int weapon_type = -1;
-    int armor_type = -1;
-    int items_count = -1;
-    int health = -1;
-    int dodge_rate = -1;
-    int health_regen = -1;
-    int luck = -1;
+#define DECLARE_FIELD(type, name, default_value) type name = default_value;
+    DATA_FIELDS(DECLARE_FIELD)
+#undef DECLARE_FIELD
 };

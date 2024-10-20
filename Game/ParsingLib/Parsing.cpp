@@ -153,33 +153,16 @@ std::unordered_map<std::string, DataExtraction> Parsing::GetAllDataFromInventory
 
 void Parsing::SetItemDetail(const DataExtraction& _item) {
     item.clear();
-    if (!_item.type.empty()) item.emplace_back("type", _item.type);
-    if (_item.id != -1) item.emplace_back("id", _item.id);
-    if (_item.quantity != -1) item.emplace_back("quantity", _item.quantity);
-    if (_item.damage != -1) item.emplace_back("damage", _item.damage);
-    if (_item.durability != -1) item.emplace_back("durability", _item.durability);
-    if (_item.resistance != -1) item.emplace_back("resistance", _item.resistance);
-    if (!_item.name.empty()) item.emplace_back("name", _item.name);
-    if (!_item.description.empty()) item.emplace_back("description", _item.description);
-    if (_item.sell_price != -1) item.emplace_back("sell_price", _item.sell_price);
-    if (_item.level != -1) item.emplace_back("level", _item.level);
-    if (_item.defense != -1) item.emplace_back("defense", _item.defense);
-    if (!_item.skill.empty()) item.emplace_back("skill", _item.skill);
-    if (_item.attack != -1) item.emplace_back("attack", _item.attack);
-    if (_item.attack_speed != -1) item.emplace_back("attack_speed", _item.attack_speed);
-    if (_item.crit_rate != -1) item.emplace_back("crit_rate", _item.crit_rate);
-    if (_item.crit_damage != -1) item.emplace_back("crit_damage", _item.crit_damage);
-    if (_item.accuracy != -1) item.emplace_back("accuracy", _item.accuracy);
-    if (_item.cooldown_reduction != -1) item.emplace_back("cooldown_reduction", _item.cooldown_reduction);
-    if (_item.life_steal != -1) item.emplace_back("life_steal", _item.life_steal);
-    if (_item.item_type != -1) item.emplace_back("item_type", _item.item_type);
-    if (_item.weapon_type != -1) item.emplace_back("weapon_type", _item.weapon_type);
-    if (_item.armor_type != -1) item.emplace_back("armor_type", _item.armor_type);
-    if (_item.items_count != -1) item.emplace_back("items_count", _item.items_count);
-    if (_item.health != -1) item.emplace_back("health", _item.health);
-    if (_item.dodge_rate != -1) item.emplace_back("dodge_rate", _item.dodge_rate);
-    if (_item.health_regen != -1) item.emplace_back("health_regen", _item.health_regen);
-    if (_item.luck != -1) item.emplace_back("luck", _item.luck);
+    // la macro permet de simplement ajouter un nouveau type/attribut dans la struct DataExtraction
+    // et rien besoin de faire, elle sera automatiquement pris en compte
+    #define HANDLE_FIELD(type, name, default_value) \
+        if (_item.name != default_value) { \
+            item.emplace_back(#name, _item.name); \
+        }
+
+    DATA_FIELDS(HANDLE_FIELD)
+
+    #undef HANDLE_FIELD
     item.emplace_back("isStackable", _item.isStackable);
 
     listItems.push_back(item);

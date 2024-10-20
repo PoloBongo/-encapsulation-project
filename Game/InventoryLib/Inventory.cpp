@@ -38,38 +38,6 @@ void Inventory::RemoveItem(const std::shared_ptr<Item>& _item, int _amount)
 	}
 }
 
-void Inventory::LoadInventory(Parsing& _parsing)
-{
-	_parsing.ShowTargetItems();
-	auto sections = _parsing.GetListItems();
-
-	CreateItem(sections);
-}
-
-void Inventory::CreateItem(std::vector<std::vector<std::pair<std::string, ParsingOption>>>& _listItems) {
-	ItemBuild itemBuild;
-    for (const auto& listItem : _listItems) {
-        std::string type;
-
-		// stock le type pour le transmettre � "ItemBuild" qui pourra d�terminer c'est quel type d'item
-		// puis traiter en fonction du type d'item les valeurs � attribu�
-        for (const auto& [key, value] : listItem) {
-            std::visit([&](auto&& arg) {
-                if (key == "type") {
-                    if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::string>) {
-                        type = arg;
-                    }
-                }
-            }, value);
-        }
-
-		auto item = itemBuild.CreateItemByType(type, listItem);
-		if (item) {
-			AddItem(item);
-		}
-    }
-}
-
 void Inventory::ModifyValueOfItem(const std::string& _category, const std::string& _key, const std::string& _value, Parsing& _parsing)
 {
 	std::string filePath = _parsing.GetFilePath();
@@ -111,6 +79,38 @@ void Inventory::ModifyValueOfItem(const std::string& _category, const std::strin
 		fileWrite << outputLine << "\n";
 	}
 	fileWrite.close();
+}
+
+void Inventory::LoadInventory(Parsing& _parsing)
+{
+	_parsing.ShowTargetItems();
+	auto sections = _parsing.GetListItems();
+
+	CreateItem(sections);
+}
+
+void Inventory::CreateItem(std::vector<std::vector<std::pair<std::string, ParsingOption>>>& _listItems) {
+	ItemBuild itemBuild;
+    for (const auto& listItem : _listItems) {
+        std::string type;
+
+		// stock le type pour le transmettre � "ItemBuild" qui pourra d�terminer c'est quel type d'item
+		// puis traiter en fonction du type d'item les valeurs � attribu�
+        for (const auto& [key, value] : listItem) {
+            std::visit([&](auto&& arg) {
+                if (key == "type") {
+                    if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::string>) {
+                        type = arg;
+                    }
+                }
+            }, value);
+        }
+
+		auto item = itemBuild.CreateItemByType(type, listItem);
+		if (item) {
+			AddItem(item);
+		}
+    }
 }
 
 
