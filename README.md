@@ -1,8 +1,6 @@
 # Documentation
 Nous avons crée une bibliothèque ParsingLib qui permet d'extraire les données de inventory.ini et de database.ini. Chaque Item contient un ID qui fait référence à un ID dans la Database, ce qui nous permet de faire la liaison et de récupérer des valeurs de base qui ne changeront pas.
-<br><br>
-...InventoryLib
-<br><br>
+
 Vous pourrez retrouver la documentation des 2 librairies juste <a href="https://www.baimmobilier.fr/gtech3/encapsulation/Documentation/html/" target="_blank">ici</a>
  !
 
